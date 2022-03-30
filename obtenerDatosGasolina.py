@@ -86,8 +86,11 @@ def registrarDiaActualizacion(fecha):
         file.write(fecha)
     
 def comprobarYaActualizado(fecha):
-    with open ("data/UltimoDia.txt", "r", encoding="utf-8") as file:
-        fechaActualizacion = file.read()
+    try:
+        with open ("data/UltimoDia.txt", "r", encoding="utf-8") as file:
+            fechaActualizacion = file.read()
+    except FileNotFoundError:
+        return False
     
     if fecha == fechaActualizacion:
         return True
