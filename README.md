@@ -1,11 +1,11 @@
 ## Índice
 
 1. [Introducción](#Introducción)
-2. [Obtención De Los Datos](#Obtención_De_Los_Datos)
-3. [Conjuntos De Datos](#Conjuntos_De_Datos)
-4. [Dataset Estaciones De Servicio](#Dataset_Estaciones_De_Servicio)
+2. [Obtención de los Datos](#Obtención_De_Los_Datos)
+3. [Conjuntos de Datos](#Conjuntos_De_Datos)
+4. [Dataset Estaciones de Servicio](#Dataset_Estaciones_De_Servicio)
 5. [Dataset Precio Combustible Mensual](#Dataset_Precio_Combustible_Mensual)
-6. [Pruebas De Ejecución](#Pruebas_De_Ejecución)
+6. [Pruebas de Ejecución](#Pruebas_De_Ejecución)
 
 
 # Introducción <a name="Introducción"></a>
@@ -82,9 +82,9 @@ El conjunto de datos *precioEESS-{mes}-{año}.csv* se encuentra formado por los 
 | % BioEtanol                        | Porcentaje de BioEtanol                                              | Float    |
 | % Éster metílico                   | Porcentaje de éster metílico                                         | Float    |
 
-# Pruebas De Ejecución <a name="Pruebas_De_Ejecución"></a>
+# Pruebas de Ejecución <a name="Pruebas_De_Ejecución"></a>
 
-Para ejecutar el script hay que ejecutar el comando XX desde la raíz del proyecto.
+Para ejecutar el script hay que ejecutar el comando `python obtenerPrecioCombustible.py` desde la raíz del proyecto.
 
 ![Prueba de Ejecución Correcta](assets/demo.gif)
 **Video 1: Ejecución correcta del script.**
