@@ -55,7 +55,7 @@ El conjunto de datos *EESS.csv* se encuentra formado por los siguientes atributo
 | Municipio        | Municipio al que pertenece la Estación de Servicio                                                | Str      |
 | C.P.             | Código Postal del municipio al que pertenece la Estación de Servicio                              | Str      |
 | Provincia        | Provincia a la que pertenece la Estación de Servicio                                              | Str      |
-| IDCCAA           | Identificador de la Comunidad Autónoma a la que pertenece la Estación de Servicio                 | Str      |
+| CCAA           | Nombre de la Comunidad Autónoma a la que pertenece la Estación de Servicio                 | Str      |
 
 ## Dataset precio combustible mensual <a name="Dataset_Precio_Combustible_Mensual"></a>
 
