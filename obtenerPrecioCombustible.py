@@ -36,7 +36,7 @@ def obtenerDatosPrecios():
             # Si dispongo de datos para ese día se para el programa para evitar duplicidades en los datos
             if comprobarYaActualizado(fecha): 
                 spinner.ok("✅")    
-                print(f"Ya se disponen de los datos para la fecha: {fecha}")
+                print(f"👌 Ya se disponen de los datos para la fecha: {fecha}")
                 log.info(f"Ya se disponen de los datos para la fecha: {fecha}")
                 sys.exit(0)
             spinner.ok("✅")
