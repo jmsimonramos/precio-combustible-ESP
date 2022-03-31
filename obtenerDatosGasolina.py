@@ -108,6 +108,6 @@ if __name__ == "__main__":
     print(f"Extracción de datos del día {fecha} realizada correctamente!!")
 
     print("Actualizando cambios en el repositorio")
-    commitActualizacionesPrecios(fecha)
-
     registrarDiaActualizacion(fecha)
+    
+    commitActualizacionesPrecios(fecha)
