@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from git import Repo
 
-DATA_PATH = "data/historico/precioEESS-"
+DATA_PATH = "data/historico/precioEESS-" # Ruta donde se almacenarán los datos
 
 def obtenerDatosPrecios():
     print("Realizando petición al servicio REST")
@@ -20,13 +20,14 @@ def obtenerDatosPrecios():
 
     print(f"Código de estado: {request.status_code}")
 
-    json_data = request.json()
+    json_data = request.json() # Formateamos el contenido de la respuesta a JSON
 
     # Almacenamos por separado los valores correspondientes a la fecha de la petición y al listado de los precios de las estaciones de servicio
     fecha = json_data["Fecha"].split(" ")[0].replace("/", "-")
     precios = json_data["ListaEESSPrecio"]
     
-    if comprobarYaActualizado(fecha):
+    # Si dispongo de datos para ese día se para el programa para evitar duplicidades en los datos
+    if comprobarYaActualizado(fecha): 
         print(f"Ya se disponen de los datos para la fecha: {fecha}. Saliendo...")
         exit(1)
 
@@ -55,7 +56,8 @@ def existeFicheroDatos(fecha):
 
 
 def guardarDatos(dataframe, fecha, esPrimero):
-    if esPrimero:
+    # Si el DataFrame contiene los precios del primer día del mes lo guardamos en el fichero con las cabeceras. En caso contrario lo guardamos sin ellas para así ir concatenando los datos de los diferentes días del mes
+    if esPrimero: 
         print("Guardando datos CON cabeceras")
         dataframe.to_csv(
             f"{DATA_PATH}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=True, index=False)
@@ -68,38 +70,45 @@ def guardarDatos(dataframe, fecha, esPrimero):
 
 
 def commitActualizacionesPrecios(fecha):
-    repo = Repo(".")
+    repo = Repo(".") # Sitúo el repositorio de git desde donde lanzo el script del proyecto
     print(f"El repositorio local es: {repo}")
 
-    repo.git.add(all=True)
-    repo.git.commit('-m', f'Actualizacion de precios para el día: {fecha}')
+    # Añado todos los cambios al staging area y hago un commit con los nuevos datos
+    repo.git.add(all=True) # git add .
+    repo.git.commit('-m', f'Actualizacion de precios para el día: {fecha}') # git commit -m <mensaje>
 
     print("Realizando PUSH a rama remota")
+    # Hacemos push al repositorio remoto
     try:
         origin = repo.remote(name='origin')
         origin.push()
+        print("Push al repositorio realizado correctamente!")
     except Exception:
-        pass
+        print("No se ha podido realizar el push al repo :(")
 
 def registrarDiaActualizacion(fecha):
+    # Almacenamos en un fichero la fecha del último día del que se tienen datos del combustible
     with open("data/UltimoDia.txt", "w", encoding="utf-8") as file:
         file.write(fecha)
     
-def comprobarYaActualizado(fecha):
+def comprobarYaActualizado(fechaActual):
+    # Comprueba si la última fecha de la que se disponen datos del precio es la misma que la actual para evitar duplicidades en los datos
     try:
         with open ("data/UltimoDia.txt", "r", encoding="utf-8") as file:
             fechaActualizacion = file.read()
     except FileNotFoundError:
         return False
     
-    if fecha == fechaActualizacion:
+    if fechaActual == fechaActualizacion:
         return True
     
     return False
 
 if __name__ == "__main__":
+    # Obtenemos los datos de los precios y la fecha
     fecha, datosPrecio_df = obtenerDatosPrecios()
 
+    # Comprobamos si existe el fichero de datos para los precios de ese mes para guardar los nuevos datos con cabecera o sin ella
     if existeFicheroDatos(fecha=fecha):
         guardarDatos(dataframe=datosPrecio_df, fecha=fecha, esPrimero=False)
     else:
@@ -107,7 +116,9 @@ if __name__ == "__main__":
 
     print(f"Extracción de datos del día {fecha} realizada correctamente!!")
 
+    # Actualizamos el valor de la última fecha de la que disponemos datos
     print("Actualizando cambios en el repositorio")
-    registrarDiaActualizacion(fecha)
+    registrarDiaActualizacion(fecha) 
     
+    # Commiteamos los cambios y los subimos al repositorio remoto
     commitActualizacionesPrecios(fecha)
