@@ -207,4 +207,4 @@ if __name__ == "__main__":
     registrarUltimaFechaDisponibleProyecto(fecha) 
     
     # Commiteamos los cambios y los subimos al repositorio remoto
-    #commitActualizacionesPrecios(fecha)
+    commitActualizacionesPrecios(fecha)
