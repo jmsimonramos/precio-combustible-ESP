@@ -8,11 +8,11 @@ from git import Repo
 import sys
 import logging as log
 from yaspin import yaspin
-from Utils import cargarConfiguracion, guardarConfiguracion
+from Utils import cargarConfiguracion, guardarConfiguracion, formatearPrecio
 
 config = cargarConfiguracion()
 
-DATA_PATH = config["META"]["DATA_PATH"] # Ruta donde se almacenarán los datos
+DATA_PATH = config["META"]["EESS_PATH"] # Ruta donde se almacenarán los datos
 LOG_PATH = config["META"]["LOG_PATH"] # Ruta donde se almacena el log
 
 # Configuramos el log con la ruta del fichero, el modo de uso (a = añadir al final del fichero), el formato del mensaje (tiempo - tipoError - mensaje) y la prioridad mínima(DEBUG = más baja, por lo que cualquier aviso se registrará en el log)
@@ -49,25 +49,46 @@ def obtenerDatosPrecios():
         except Exception as e:
             spinner.fail(config["META"]["ICONO_ERROR"])
             log.error(f"Error inesperado. {e}")
+            sys.exit(0)
 
     with yaspin(text="Procesando datos") as spinner:
         # Creamos un dataframe con los precios y nos quedamos únicamente con las columnas relativas a los precios del combustible
         try:
             precios_df = pd.json_normalize(precios)
-            precios_df = precios_df[config["COMBUSTIBLE"]["COLUMNAS_PRECIO"]]
+            precios_df = precios_df[config["COMBUSTIBLE"]["COLUMNAS"]]
 
             # Sustituimos los valores vacíos por NaN
             precios_df = precios_df.replace("", np.NaN)
-
+                        
+            precios_df = formatearPreciosCombustible(precios_df)
+            
             # Insertamos una columna correspondiente a la fecha para poder distinguir entre los precios en distintos días
             precios_df.insert(0, "Fecha", fecha)
-
             spinner.ok(config["META"]["ICONO_OK"])
-            return fecha, precios_df
         except Exception as e:
             spinner.fail(config["META"]["ICONO_ERROR"])
             log.error(f"Error inesperado. {e}")
             sys.exit(0)
+
+        return fecha, precios_df
+        
+def formatearPreciosCombustible(dataframe):
+    dataframe["Precio Biodiesel"] = dataframe["Precio Biodiesel"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Bioetanol"] = dataframe["Precio Bioetanol"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gas Natural Comprimido"] = dataframe["Precio Gas Natural Comprimido"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gas Natural Licuado"] = dataframe["Precio Gas Natural Licuado"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gases licuados del petróleo"] = dataframe["Precio Gases licuados del petróleo"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gasoleo A"] = dataframe["Precio Gasoleo A"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gasoleo B"] = dataframe["Precio Gasoleo B"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gasoleo Premium"] = dataframe["Precio Gasoleo Premium"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gasolina 95 E10"] = dataframe["Precio Gasolina 95 E10"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gasolina 95 E5"] = dataframe["Precio Gasolina 95 E5"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gasolina 95 E5 Premium"] = dataframe["Precio Gasolina 95 E5 Premium"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gasolina 98 E10"] = dataframe["Precio Gasolina 98 E10"].apply(lambda x: formatearPrecio(x))
+    dataframe["Precio Gasolina 98 E5"] = dataframe["Precio Gasolina 98 E5"].apply(lambda x: formatearPrecio(x))
+    dataframe["% BioEtanol"] = dataframe["% BioEtanol"].apply(lambda x: formatearPrecio(x))
+    dataframe["% Éster metílico"] = dataframe["% Éster metílico"].apply(lambda x: formatearPrecio(x))
+    return dataframe
 
 def existeFicheroDatos(fecha):
     # Comprobamos si existe el fichero para ese mes. Si existe = NO es primero de mes --> No hay que crear un nuevo archivo
@@ -75,20 +96,22 @@ def existeFicheroDatos(fecha):
     return exists(f"{DATA_PATH}{fecha[3:]}.csv")
 
 
-def guardarDatos(dataframe, fecha, esPrimero):
+def guardarDatos(dataframe, fecha, esPrimero, esProvincia=False, esCCAA=False):
     # Si el DataFrame contiene los precios del primer día del mes lo guardamos en el fichero con las cabeceras. En caso contrario lo guardamos sin ellas para así ir concatenando los datos de los diferentes días del mes
-    with yaspin(text="Guardando los datos en el .csv") as spinner:
-        try:
-            if esPrimero: 
-                dataframe.to_csv(f"{DATA_PATH}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=True, index=False)
-            else:
-                dataframe.to_csv(f"{DATA_PATH}{fecha[3:]}.csv", sep=";",
-                                encoding="utf-8", header=False, index=False, mode="a")
-            spinner.ok(config["META"]["ICONO_OK"])
-        except Exception as e:
-            spinner.fail(config["META"]["ICONO_ERROR"])
-            log.error(f"Error inesperado. {e}")
-            sys.exit(0)
+    if esPrimero: 
+        if esProvincia:
+            dataframe.to_csv(f"{config['META']['PROVINCIA_PATH']}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=True, index=False)
+        elif esCCAA:
+            dataframe.to_csv(f"{config['META']['CCAA_PATH']}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=True, index=False)
+        else:
+            dataframe.drop(columns=["IDCCAA", "Provincia"], axis=1).to_csv(f"{config['META']['EESS_PATH']}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=True, index=False)
+    else:
+        if esProvincia:
+            dataframe.to_csv(f"{config['META']['PROVINCIA_PATH']}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=False, index=False, mode="a")
+        elif esCCAA:
+            dataframe.to_csv(f"{config['META']['CCAA_PATH']}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=False, index=False, mode="a")
+        else:
+            dataframe.to_csv(f"{config['META']['EESS_PATH']}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=False, index=False, mode="a")
 
 def obtenerFechaUltimaModificacionWeb():
     # Realizamos una petición a la página principal donde se encuentra la información del repositorio de datos (código de estado = 200)
@@ -125,26 +148,63 @@ def commitActualizacionesPrecios(fecha):
 
 def registrarUltimaFechaDisponibleProyecto(fecha):
     # Cambiamos el valor del último día de datos en la configuración
-    config["COMBUSTIBLE"]["ULTIMO_DIA"] = fecha
+    config["META"]["ULTIMO_DIA"] = fecha
     guardarConfiguracion(config)
     
 def yaTengoLosDatos(fechaActual):
     # Comprueba si la última fecha de la que se disponen datos del precio es la misma que la actual para evitar duplicidades en los datos
 
-    return fechaActual == config["COMBUSTIBLE"]["ULTIMO_DIA"]
+    return fechaActual == config["META"]["ULTIMO_DIA"]
+
+def obtenerDatosPrecioCCAA(dataframe, fecha):
+    # Agrupamos los datos por comunidad y calculamos la media
+    precioCCAA_df = dataframe.groupby(["IDCCAA"], as_index=False).mean().round(3)
+    # Sustituimos los identificadores de cada Comunidad Autónoma por su valor original
+    precioCCAA_df = precioCCAA_df.replace({"IDCCAA": config["EESS"]["CCAA"]}) 
+    # Renombramos la columna para que el título se corresponda con su contenido
+    precioCCAA_df.rename(columns={"IDCCAA": "CCAA"}, inplace=True)
+    # Insertamos el valor de la fecha del día
+    precioCCAA_df.insert(0, "Fecha", fecha)  
+    return precioCCAA_df
+
+def obtenerDatosPrecioProvincias(dataframe, fecha):
+    # Agrupamos los datos por provincia y calculamos la media
+    precioProvincia_df = dataframe.groupby(["Provincia"], as_index=False).mean().round(3)
+    # Insertamos el valor de la fecha del día
+    precioProvincia_df.insert(0, "Fecha", fecha)  
+    return precioProvincia_df
 
 if __name__ == "__main__":
     # Obtenemos los datos de los precios y la fecha
     fecha, datosPrecio_df = obtenerDatosPrecios()
-
+    with yaspin(text="Calculando precios medios por CCAA y provincias") as spinner:
+        try:
+            datosPrecioCCAA_df = obtenerDatosPrecioCCAA(datosPrecio_df, fecha)
+            datosPrecioProvincias_df = obtenerDatosPrecioProvincias(datosPrecio_df, fecha)
+            spinner.ok(config["META"]["ICONO_OK"])
+        except Exception as e:
+                spinner.fail(config["META"]["ICONO_ERROR"])
+                log.error(f"Error inesperado. {e}")
+                sys.exit(0)
     # Comprobamos si existe el fichero de datos para los precios de ese mes para guardar los nuevos datos con cabecera o sin ella
-    if existeFicheroDatos(fecha=fecha):
-        guardarDatos(dataframe=datosPrecio_df, fecha=fecha, esPrimero=False)
-    else:
-        guardarDatos(dataframe=datosPrecio_df, fecha=fecha, esPrimero=True)
+    with yaspin(text="Guardando los datos en el .csv") as spinner:
+        try:
+            if existeFicheroDatos(fecha=fecha):
+                guardarDatos(dataframe=datosPrecio_df, fecha=fecha, esPrimero=False)
+                guardarDatos(dataframe=datosPrecioCCAA_df, fecha=fecha, esPrimero=False, esCCAA=True)
+                guardarDatos(dataframe=datosPrecioProvincias_df, fecha=fecha, esPrimero=False, esProvincia=True)
+            else:
+                guardarDatos(dataframe=datosPrecio_df, fecha=fecha, esPrimero=True)
+                guardarDatos(dataframe=datosPrecioCCAA_df, fecha=fecha, esPrimero=True, esCCAA=True)
+                guardarDatos(dataframe=datosPrecioProvincias_df, fecha=fecha, esPrimero=True, esProvincia=True)
+            spinner.ok(config["META"]["ICONO_OK"])
+        except Exception as e:
+            spinner.fail(config["META"]["ICONO_ERROR"])
+            log.error(f"Error inesperado. {e}")
+            sys.exit(0)
 
     # Actualizamos el valor de la última fecha de la que disponemos datos    
     registrarUltimaFechaDisponibleProyecto(fecha) 
     
     # Commiteamos los cambios y los subimos al repositorio remoto
-    commitActualizacionesPrecios(fecha)
+    #commitActualizacionesPrecios(fecha)

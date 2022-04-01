@@ -1,8 +1,11 @@
 {
     "META": {
-        "DATA_PATH": "data/historico/precioEESS-",
+        "EESS_PATH": "data/historico/EESS/precioEESS-",
+        "PROVINCIA_PATH": "data/historico/PROVINCIAS/precioPROVINCIA-",
+        "CCAA_PATH": "data/historico/CCAA/precioCCAA-",
         "LOG_PATH": "./app.log",
         "FORMATO_FECHA_LOG": "%d/%m/%y %H:%M:%S",
+        "ULTIMO_DIA": "31-03-2022",
         "REMOTO": "origin",
         "ICONO_OK": "\u2705",
         "ICONO_ERROR": "\u274c"
@@ -11,11 +14,51 @@
         "API_URL": "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/",
         "MAIN_URL": "https://datos.gob.es/es/catalogo/e05068001-precio-de-carburantes-en-las-gasolineras-espanolas"
     },
-    "EESS": {},
+    "EESS": {
+        "CCAA": {
+            "01": "ANDALUC\u00cdA",
+            "02": "ARAG\u00d3N",
+            "03": "PRINCIPADO DE ASTURIAS",
+            "04": "BALEARES",
+            "05": "CANARIAS",
+            "06": "CANTABRIA",
+            "07": "CASTILLA LA MANCHA",
+            "08": "CASTILLA Y LE\u00d3N",
+            "09": "CATALU\u00d1A",
+            "10": "COMUNIDAD VALENCIANA",
+            "11": "EXTREMADURA",
+            "12": "GALICIA",
+            "13": "COMUNIDAD DE MADRID",
+            "14": "REGI\u00d3N DE MURCIA",
+            "15": "COMUNIDAD FORAL DE NAVARRA",
+            "16": "PAIS VASCO",
+            "17": "LA RIOJA",
+            "18": "CIUDAD AUT\u00d3NOMA DE CEUTA",
+            "19": "CIUDAD AUT\u00d3NOMA DE MELILLA"
+        }
+    },
     "COMBUSTIBLE": {
-        "ULTIMO_DIA": "01-04-2022",
-        "COLUMNAS_PRECIO": [
+        "COLUMNAS_FORMATEAR": [
+            "Precio Biodiesel",
+            "Precio Bioetanol",
+            "Precio Gas Natural Comprimido",
+            "Precio Gas Natural Licuado",
+            "Precio Gases licuados del petr\u00f3leo",
+            "Precio Gasoleo A",
+            "Precio Gasoleo B",
+            "Precio Gasoleo Premium",
+            "Precio Gasolina 95 E10",
+            "Precio Gasolina 95 E5",
+            "Precio Gasolina 95 E5 Premium",
+            "Precio Gasolina 98 E10",
+            "Precio Gasolina 98 E5",
+            "% BioEtanol",
+            "% \u00c9ster met\u00edlico"
+        ],
+        "COLUMNAS": [
             "IDEESS",
+            "IDCCAA",
+            "Provincia",
             "Precio Biodiesel",
             "Precio Bioetanol",
             "Precio Gas Natural Comprimido",
