@@ -12,11 +12,8 @@ from Utils import cargarConfiguracion, guardarConfiguracion, formatearPrecio
 
 config = cargarConfiguracion()
 
-DATA_PATH = config["META"]["EESS_PATH"] # Ruta donde se almacenarán los datos
-LOG_PATH = config["META"]["LOG_PATH"] # Ruta donde se almacena el log
-
 # Configuramos el log con la ruta del fichero, el modo de uso (a = añadir al final del fichero), el formato del mensaje (tiempo - tipoError - mensaje) y la prioridad mínima(DEBUG = más baja, por lo que cualquier aviso se registrará en el log)
-log.basicConfig(filename=LOG_PATH, filemode="a", format='%(asctime)s - %(levelname)s - %(message)s', datefmt=config["META"]["FORMATO_FECHA_LOG"], level=log.DEBUG)
+log.basicConfig(filename=config["META"]["LOG_PATH"], filemode="a", format='%(asctime)s - %(levelname)s - %(message)s', datefmt=config["META"]["FORMATO_FECHA_LOG"], level=log.DEBUG)
 
 def obtenerDatosPrecios():
     
@@ -71,29 +68,16 @@ def obtenerDatosPrecios():
             sys.exit(0)
 
         return fecha, precios_df
-        
+
 def formatearPreciosCombustible(dataframe):
-    dataframe["Precio Biodiesel"] = dataframe["Precio Biodiesel"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Bioetanol"] = dataframe["Precio Bioetanol"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gas Natural Comprimido"] = dataframe["Precio Gas Natural Comprimido"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gas Natural Licuado"] = dataframe["Precio Gas Natural Licuado"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gases licuados del petróleo"] = dataframe["Precio Gases licuados del petróleo"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gasoleo A"] = dataframe["Precio Gasoleo A"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gasoleo B"] = dataframe["Precio Gasoleo B"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gasoleo Premium"] = dataframe["Precio Gasoleo Premium"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gasolina 95 E10"] = dataframe["Precio Gasolina 95 E10"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gasolina 95 E5"] = dataframe["Precio Gasolina 95 E5"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gasolina 95 E5 Premium"] = dataframe["Precio Gasolina 95 E5 Premium"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gasolina 98 E10"] = dataframe["Precio Gasolina 98 E10"].apply(lambda x: formatearPrecio(x))
-    dataframe["Precio Gasolina 98 E5"] = dataframe["Precio Gasolina 98 E5"].apply(lambda x: formatearPrecio(x))
-    dataframe["% BioEtanol"] = dataframe["% BioEtanol"].apply(lambda x: formatearPrecio(x))
-    dataframe["% Éster metílico"] = dataframe["% Éster metílico"].apply(lambda x: formatearPrecio(x))
+    for columna in config["COMBUSTIBLE"]["COLUMNAS_FORMATEAR"]:
+        dataframe[columna] = dataframe[columna].apply(lambda precio: formatearPrecio(precio))
     return dataframe
 
 def existeFicheroDatos(fecha):
     # Comprobamos si existe el fichero para ese mes. Si existe = NO es primero de mes --> No hay que crear un nuevo archivo
     # Si NO existe = ES primero de mes --> Creamos nuevo archivo
-    return exists(f"{DATA_PATH}{fecha[3:]}.csv")
+    return exists(f"{config['META']['EESS_PATH']}{fecha[3:]}.csv")
 
 
 def guardarDatos(dataframe, fecha, esPrimero, esProvincia=False, esCCAA=False):
