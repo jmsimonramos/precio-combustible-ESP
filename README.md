@@ -6,7 +6,7 @@
 4. [Dataset Estaciones de Servicio](#Dataset_Estaciones_De_Servicio)
 5. [Dataset Precio Combustible Mensual](#Dataset_Precio_Combustible_Mensual)
 6. [Pruebas de Ejecución](#Pruebas_De_Ejecución)
-7. [Gráficas Histórico de precios](#Graficas)
+7. [Gráficas Histórico de precios (Actualización diaria)](#Graficas)
 
 
 # Introducción <a name="Introducción"></a>
@@ -99,49 +99,49 @@ Para ejecutar el script hay que ejecutar el comando `python obtenerPrecioCombust
 
 * Gasóleo A
 ![Precio Gasoleo A CCAA](assets/graficos/CCAA-PrecioGasoleoA.png)
-**Figura 5: Histórico Precio Gasóleo A por Comunidad Autónoma**
+**Figura 5: Histórico Precio Gasóleo A por Comunidad Autónoma.**
 
 * Gasóleo Premium
 ![Precio Gasoleo Premium CCAA](assets/graficos/CCAA-PrecioGasoleoPremium.png)
-**Figura 5: Histórico Precio Gasóleo Premium por Comunidad Autónoma**
+**Figura 5: Histórico Precio Gasóleo Premium por Comunidad Autónoma.**
 
 * Precio Gasolina 95 E5
 ![Precio Gasolina 95 E5 CCAA](assets/graficos/CCAA-PrecioGasolina95E5.png)
-**Figura 6: Histórico Precio Gasolina 95 E5 por Comunidad Autónoma**
+**Figura 6: Histórico Precio Gasolina 95 E5 por Comunidad Autónoma.**
 
 * Precio Gasolina 95 E10
 ![Precio Gasolina 95 E10 CCAA](assets/graficos/CCAA-PrecioGasolina95E10.png)
-**Figura 7: Histórico Precio Gasolina 95 E10 por Comunidad Autónoma**
+**Figura 7: Histórico Precio Gasolina 95 E10 por Comunidad Autónoma.**
 
 * Precio Gasolina 98 E5
 ![Precio Gasolina 98 E5 CCAA](assets/graficos/CCAA-PrecioGasolina98E5.png)
-**Figura 8: Histórico Precio Gasolina 98 E5 por Comunidad Autónoma**
+**Figura 8: Histórico Precio Gasolina 98 E5 por Comunidad Autónoma.**
 
 * Precio Gasolina 98 E10
 ![Precio Gasolina 98 E10 CCAA](assets/graficos/CCAA-PrecioGasolina98E10.png)
-**Figura 9: Histórico Precio Gasolina 98 E10 por Comunidad Autónoma**
+**Figura 9: Histórico Precio Gasolina 98 E10 por Comunidad Autónoma.**
 
 ## Provincias
 * Gasóleo A
 ![Precio Gasoleo A Provincia](assets/graficos/PROVINCIAS-PrecioGasoleoA.png)
-**Figura 10: Histórico Precio Gasóleo A por Provincias**
+**Figura 10: Histórico Precio Gasóleo A por Provincias.**
 
 * Gasóleo Premium
 ![Precio Gasoleo Premium Provincia](assets/graficos/PROVINCIAS-PrecioGasoleoPremium.png)
-**Figura 11: Histórico Precio Gasóleo Premium por Provincias**
+**Figura 11: Histórico Precio Gasóleo Premium por Provincias.**
 
 * Precio Gasolina 95 E5
 ![Precio Gasolina 95 E5 Provincia](assets/graficos/PROVINCIAS-PrecioGasolina95E5.png)
-**Figura 12: Histórico Precio Gasolina 95 E5 por Provincias**
+**Figura 12: Histórico Precio Gasolina 95 E5 por Provincias.**
 
 * Precio Gasolina 95 E10
 ![Precio Gasolina 95 E10 Provincia](assets/graficos/PROVINCIAS-PrecioGasolina95E10.png)
-**Figura 13: Histórico Precio Gasolina 95 E10 por Provincias**
+**Figura 13: Histórico Precio Gasolina 95 E10 por Provincias.**
 
 * Precio Gasolina 98 E5
 ![Precio Gasolina 98 E5 Provincia](assets/graficos/PROVINCIAS-PrecioGasolina98E5.png)
-**Figura 14: Histórico Precio Gasolina 98 E5 por Provincias**
+**Figura 14: Histórico Precio Gasolina 98 E5 por Provincias.**
 
 * Precio Gasolina 98 E10
 ![Precio Gasolina 98 E10 Provincia](assets/graficos/PROVINCIAS-PrecioGasolina98E10.png)
-**Figura 15: Histórico Precio Gasolina 98 E10 por Provincias**
+**Figura 15: Histórico Precio Gasolina 98 E10 por Provincias.**
