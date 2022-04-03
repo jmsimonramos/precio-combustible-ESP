@@ -10,7 +10,7 @@ class ObtenerPrecio():
     def __init__(self):
         self.__Utils, self.__IO = Utils(), IO()
         self.__config = self.__IO.cargarConfiguracion()
-        self.__fecha = None
+        self.fecha = ""
         self.__precios_raw = ""
         self.__preciosEESS, self.__preciosCCAA, self.__preciosProvincia = "", "", ""
 
@@ -26,9 +26,9 @@ class ObtenerPrecio():
                 self.__calcularPrecioProvincias()
                 spinner.ok(self.__config["META"]["ICONO_OK"])
             except Exception as e:
-                    spinner.fail(self.__config["META"]["ICONO_ERROR"])
-                    log.error(f"Error inesperado. {e}")
-                    sys.exit(0)
+                spinner.fail(self.__config["META"]["ICONO_ERROR"])
+                log.error(f"Error inesperado. {e}")
+                sys.exit(0)
         # Comprobamos si existe el fichero de datos para los precios de ese mes para guardar los nuevos datos con cabecera o sin ella
         with yaspin(text="Guardando los datos en el .csv") as spinner:
             try:
@@ -40,20 +40,17 @@ class ObtenerPrecio():
                 sys.exit(0)
 
         # Actualizamos el valor de la última fecha de la que disponemos datos    
-        self.__Utils.registrarUltimaFechaDisponibleProyecto(self.__fecha) 
-        
-        # Commiteamos los cambios y los subimos al repositorio remoto
-        #self.__Utils.commitActualizacionesPrecios(self.__fecha)
-
+        self.__Utils.registrarUltimaFechaDisponibleProyecto(self.fecha) 
+    
     def __guardarDatos(self):
-        if self.__Utils.existeFicheroDatos(self.__fecha):
-            self.__IO.guardarDataFrame(self.__preciosEESS, self.__fecha, esPrimero=False)
-            self.__IO.guardarDataFrame(self.__preciosCCAA, self.__fecha, esPrimero=False, esCCAA=True)
-            self.__IO.guardarDataFrame(self.__preciosProvincia, self.__fecha, esPrimero=False, esProvincia=True)
+        if self.__Utils.existeFicheroDatos(self.fecha):
+            self.__IO.guardarDataFrame(self.__preciosEESS, self.fecha, esPrimero=False)
+            self.__IO.guardarDataFrame(self.__preciosCCAA, self.fecha, esPrimero=False, esCCAA=True)
+            self.__IO.guardarDataFrame(self.__preciosProvincia, self.fecha, esPrimero=False, esProvincia=True)
         else:
-            self.__IO.guardarDataFrame(self.__preciosEESS, self.__fecha, esPrimero=True)
-            self.__IO.guardarDataFrame(self.__preciosCCAA, self.__fecha, esPrimero=True, esCCAA=True)
-            self.__IO.guardarDataFrame(self.__preciosProvincia, self.__fecha, esPrimero=True, esProvincia=True)
+            self.__IO.guardarDataFrame(self.__preciosEESS, self.fecha, esPrimero=True)
+            self.__IO.guardarDataFrame(self.__preciosCCAA, self.fecha, esPrimero=True, esCCAA=True)
+            self.__IO.guardarDataFrame(self.__preciosProvincia, self.fecha, esPrimero=True, esProvincia=True)
 
     def __obtenerDatosPrecio(self):
         with yaspin(text="Obteniendo datos del precio del combustible") as spinner:
@@ -71,15 +68,15 @@ class ObtenerPrecio():
         with yaspin(text="Comprobando que los datos no son repetidos") as spinner:
         # Almacenamos por separado los valores correspondientes a la fecha de la petición y al listado de los precios de las estaciones de servicio
             try:
-                self.__fecha = json_data["Fecha"].split(" ")[0].replace("/", "-")
+                self.fecha = json_data["Fecha"].split(" ")[0].replace("/", "-")
                 #fecha = obtenerFechaUltimaModificacionWeb()
                 self.__precios_raw = json_data["ListaEESSPrecio"]
             
                 # Si dispongo de datos para ese día se para el programa para evitar duplicidades en los datos
-                if self.__Utils.yaTengoLosDatos(self.__fecha): 
+                if self.__Utils.yaTengoLosDatos(self.fecha): 
                     spinner.ok(self.__config["META"]["ICONO_OK"])
-                    print(f"👌 Ya se disponen de los datos para la fecha: {self.__fecha}")
-                    log.info(f"Ya se disponen de los datos para la fecha: {self.__fecha}")
+                    print(f"👌 Ya se disponen de los datos para la fecha: {self.fecha}")
+                    log.info(f"Ya se disponen de los datos para la fecha: {self.fecha}")
                     sys.exit(0)
                 spinner.ok(self.__config["META"]["ICONO_OK"])
 
@@ -100,7 +97,7 @@ class ObtenerPrecio():
                 self.__formatearPreciosCombustible()
                 
                 # Insertamos una columna correspondiente a la fecha para poder distinguir entre los precios en distintos días
-                self.__preciosEESS.insert(0, "Fecha", self.__fecha)
+                self.__preciosEESS.insert(0, "Fecha", self.fecha)
                 spinner.ok(self.__config["META"]["ICONO_OK"])
             except Exception as e:
                 spinner.fail(self.__config["META"]["ICONO_ERROR"])
@@ -119,11 +116,11 @@ class ObtenerPrecio():
         # Renombramos la columna para que el título se corresponda con su contenido
         self.__preciosCCAA.rename(columns={"IDCCAA": "CCAA"}, inplace=True)
         # Insertamos el valor de la fecha del día
-        self.__preciosCCAA.insert(0, "Fecha", self.__fecha)  
+        self.__preciosCCAA.insert(0, "Fecha", self.fecha)  
         
 
     def __calcularPrecioProvincias(self):
         # Agrupamos los datos por provincia y calculamos la media
         self.__preciosProvincia = self.__preciosEESS.groupby(["Provincia"], as_index=False).mean().round(3)
         # Insertamos el valor de la fecha del día
-        self.__preciosProvincia.insert(0, "Fecha", self.__fecha)  
+        self.__preciosProvincia.insert(0, "Fecha", self.fecha)  

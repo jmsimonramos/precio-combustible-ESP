@@ -50,3 +50,6 @@ class Utils():
         # Comprobamos si existe el fichero para ese mes. Si existe = NO es primero de mes --> No hay que crear un nuevo archivo
         # Si NO existe = ES primero de mes --> Creamos nuevo archivo
         return exists(f"{self.config['META']['EESS_PATH']}{fecha[3:]}.csv")
+
+    def guardarFigura(self, fig, titulo):
+        fig.get_figure().savefig(titulo, bbox_inches='tight')
