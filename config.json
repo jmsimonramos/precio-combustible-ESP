@@ -1,9 +1,10 @@
 {
     "META": {
-        "EESS_PATH": "data/historico/EESS/precioEESS-",
-        "PROVINCIA_PATH": "data/historico/PROVINCIAS/precioPROVINCIA-",
-        "CCAA_PATH": "data/historico/CCAA/precioCCAA-",
-        "LOG_PATH": "./app.log",
+        "EESS_PATH": "local/historico/EESS/precioEESS-",
+        "PROVINCIA_PATH": "local/historico/PROVINCIAS/precioPROVINCIA-",
+        "CCAA_PATH": "local/historico/CCAA/precioCCAA-",
+        "IMG_PATH": "local/assets/img/",
+        "LOG_PATH": "local/app.log",
         "FORMATO_FECHA_LOG": "%d/%m/%y %H:%M:%S",
         "ULTIMO_DIA": "03-04-2022",
         "REMOTO": "origin",
