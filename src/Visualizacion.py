@@ -23,8 +23,8 @@ class Visualizacion():
     def generarVisualizaciones(self):
         with yaspin(text="Cargando datos para la visualización") as spinner:
             try:
-                self.__cargarDatosCCAA()
-                self.__cargarDatosProvincia()
+                self.__cargarDatosCCAA() # Cargamos los datos de los precios por CCAA
+                self.__cargarDatosProvincia() # Cargamos los datos de los precios por Provincias
                 spinner.ok(self.__config["META"]["ICONO_OK"])
             except Exception as e:
                 print(e)
@@ -34,7 +34,7 @@ class Visualizacion():
         
         with yaspin(text="Generando gráficas") as spinner:
             try:
-                self.__generarGraficos()
+                self.__generarGraficos() # Genera todos los gráficos
                 spinner.ok(self.__config["META"]["ICONO_OK"])
             except Exception as e:
                 print(e)
@@ -43,40 +43,49 @@ class Visualizacion():
                 sys.exit(0)
     
     def __cargarDatosCCAA(self):
-        lista_precios_ccaa = sorted([file for file in os.listdir(self.__config["VISUALIZACION"]["RUTA_CCAA"])])
+        # Obtenemos todos los ficheros de todos los meses disponibles para las CCAA
+        lista_precios_ccaa = sorted([file for file in os.listdir(self.__config["VISUALIZACION"]["RUTA_CCAA"])]) #
         df_CCAA = pd.DataFrame()
+        # Cargamos los datos de cada fichero y los concatenamos para generar un dataset con todo el histórico
         for fichero in lista_precios_ccaa:
             df_aux = pd.read_csv(f"{self.__config['VISUALIZACION']['RUTA_CCAA']}{fichero}", sep=";", encoding="utf-8")
-            df_CCAA = pd.concat([df_CCAA, df_aux], axis=0)
+            df_CCAA = pd.concat([df_CCAA, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
 
-        self.__df_MedioCCAA = df_CCAA.groupby(["Fecha", "CCAA"], as_index=False).mean().round(3)
+        self.__df_MedioCCAA = df_CCAA.groupby(["Fecha", "CCAA"], as_index=False).mean().round(3) # Agrupamos los datos por fecha y CCAA y calculamos la media de los precios para cada tipo de combustible
     
     def __cargarDatosProvincia(self):
+        # Obtenemos todos los ficheros de todos los meses disponibles para las Provincias
         lista_precios_provincia = sorted([file for file in os.listdir(self.__config["VISUALIZACION"]["RUTA_PROVINCIA"])])
         df_Provincia = pd.DataFrame()
+        # Cargamos los datos de cada fichero y los concatenamos para generar un dataset con todo el histórico
         for fichero in lista_precios_provincia:
             df_aux = pd.read_csv(f"{self.__config['VISUALIZACION']['RUTA_PROVINCIA']}{fichero}", sep=";", encoding="utf-8")
-            df_Provincia = pd.concat([df_Provincia, df_aux], axis=0)
+            df_Provincia = pd.concat([df_Provincia, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
 
-        self.__df_MedioProvincia = df_Provincia.groupby(["Fecha", "Provincia"], as_index=False).mean().round(3)
+        self.__df_MedioProvincia = df_Provincia.groupby(["Fecha", "Provincia"], as_index=False).mean().round(3) # Agrupamos los datos por fecha y CCAA y calculamos la media de los precios para cada tipo de combustible
     
     def __generarGraficos(self):
+        # Generamos gráficos de líneas de forma dinámica para cada combustible fijado en la configuración
         for variable in self.__config["VISUALIZACION"]["COMBUSTIBLES_MOSTRAR"]:
-            fig = sns.lineplot(x="Fecha", y = variable, data=self.__df_MedioCCAA, hue="CCAA", palette=self.__config["VISUALIZACION"]["PALETA"])
-            
+            fig = sns.lineplot(x="Fecha", y = variable, data=self.__df_MedioCCAA, hue="CCAA", palette=self.__config["VISUALIZACION"]["PALETA"]) # Gráfico de líneas
+            # Repetimos los parámetros del gráfico anterior con un scatterplot para que aparezcan marcas en el cruce de los ejes
             sns.scatterplot(x="Fecha", y = variable, data=self.__df_MedioCCAA, hue="CCAA", legend=False, palette=self.__config["VISUALIZACION"]["PALETA"])
-
+            # Modificamos el título del gráfico y de la leyenda, así como la posición de esta en el gráfico (fuera de el y a la derecha)
             plt.title(f"Evolución del precio del {variable} por Comunidades Autónomas", fontdict={"fontsize": 19, "fontweight": "bold"})
             plt.legend(title = "CCAA", bbox_to_anchor=(1, 1.05))
+            # Exportamos el gráfico para que este se actualice en el README
             self.__Utils.guardarFigura(fig, f'{self.__config["VISUALIZACION"]["RUTA_GRAFICO"]}CCAA-{variable.replace(" ","")}.png')
-            plt.clf()
+            plt.clf() # Limpiamos la figura para evitar que se añadan gráficos unos encima de otros
                         
             # PROVINCIAS
-            fig = sns.lineplot(x="Fecha", y = variable, data=self.__df_MedioProvincia, hue="Provincia")
+            # Se realiza el mismo proceso que para las CCAA
+            fig = sns.lineplot(x="Fecha", y = variable, data=self.__df_MedioProvincia, hue="Provincia") # Gráfico de líneas
             
-            sns.scatterplot(x="Fecha", y = variable, data=self.__df_MedioProvincia, hue="Provincia", legend=False)
+            sns.scatterplot(x="Fecha", y = variable, data=self.__df_MedioProvincia, hue="Provincia", legend=False) # Gráfico con las marcas en el cruce de los ejes
 
+            # Modificación del título del gráfico y la leyenda
             plt.title(f"Evolución del precio del {variable} por Provincias", fontdict={"fontsize": 19, "fontweight": "bold"})
             plt.legend(title = "PROVINCIAS", bbox_to_anchor=(1, 1.05))
+            # Exportar el gráfico
             self.__Utils.guardarFigura(fig, f'{self.__config["VISUALIZACION"]["RUTA_GRAFICO"]}PROVINCIAS-{variable.replace(" ","")}.png')
-            plt.clf()
+            plt.clf() # Limpiar la figura
