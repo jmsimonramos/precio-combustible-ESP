@@ -20,14 +20,14 @@ class Utils():
             return np.nan
         return float(precio.replace(",", "."))
 
-    def commitActualizacionesPrecios(self, fecha):
+    def commitActualizacionesPrecios(self):
         with yaspin(text="Actualizando repositorio local y remoto con los nuevos cambios") as spinner:
             try:
                 repo = Repo(".") # Sitúo el repositorio de git desde donde lanzo el script del proyecto
 
                 # Añado todos los cambios al staging area y hago un commit con los nuevos datos
                 repo.git.add(all=True) # git add .
-                repo.git.commit('-m', f'Actualizacion de precios para el día: {fecha}') # git commit -m <mensaje>
+                repo.git.commit('-m', f'Actualización de precios para el día: {self.config["META"]["ULTIMO_DIA"]}') # git commit -m <mensaje>
                 # Hacemos push al repositorio remoto
                 origin = repo.remote(name=self.config["META"]["REMOTO"])
                 origin.push()

@@ -11,4 +11,4 @@ if __name__ == "__main__":
     Visualizacion().generarVisualizaciones()
     
     # Hacemos un commit con los cambios y los subimos al repositorio remoto
-    Utils.commitActualizacionesPrecios(obtenerPrecio.fecha)
+    Utils.commitActualizacionesPrecios()
