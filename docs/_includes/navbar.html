@@ -1,0 +1,17 @@
+{% assign elementos = site.data.navegacion.menu %}
+<div class="navbar">
+    {% for elemento in elementos %}
+        {% if elemento.hijos %}
+            <div class="subnav">
+            <button class="subnavbtn">{{elemento.titulo}}<i class="fa fa-caret-down icono"></i></button>
+                <div class="subnav-content">
+            {% for hijo in elemento.hijos %}
+                <a href="{{hijo.enlace}}">{{hijo.titulo}}</a>
+            {% endfor %}
+                </div>
+            </div>
+        {% else%}
+            <a href="{{elemento.enlace}}">{{elemento.titulo}}</a>
+        {% endif %}
+    {% endfor %}
+</div>
