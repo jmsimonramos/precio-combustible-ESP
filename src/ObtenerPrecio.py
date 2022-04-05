@@ -15,7 +15,7 @@ class ObtenerPrecio():
         self.__preciosEESS, self.__preciosCCAA, self.__preciosProvincia = "", "", ""
 
         # Configuramos el log con la ruta del fichero, el modo de uso (a = añadir al final del fichero), el formato del mensaje (tiempo - tipoError - mensaje) y la prioridad mínima(DEBUG = más baja, por lo que cualquier aviso se registrará en el log)
-        log.basicConfig(filename=self.__config["META"]["LOG_PATH"], filemode="a", format='%(asctime)s - %(levelname)s - %(message)s', datefmt=self.__config["META"]["FORMATO___fecha_LOG"], level=log.DEBUG)
+        log.basicConfig(filename=self.__config["META"]["LOG_PATH"], filemode="a", format='%(asctime)s - %(levelname)s - %(message)s', datefmt=self.__config["META"]["FORMATO_FECHA_LOG"], level=log.DEBUG)
 
     def obtenerPrecioCombustible(self):
         self.__obtenerDatosPrecio() # Obtenemos los datos de la web del gobierno
@@ -39,8 +39,8 @@ class ObtenerPrecio():
                 log.error(f"Error inesperado. {e}")
                 sys.exit(0)
 
-        # Actualizamos el valor de la última __fecha de la que disponemos datos    
-        self.__Utils.registrarUltima__fechaDisponibleProyecto(self.__fecha) 
+        # Actualizamos el valor de la última fecha de la que disponemos datos    
+        self.__Utils.registrarUltimaFechaDisponibleProyecto(self.__fecha) 
     
     def __guardarDatos(self):
         if self.__Utils.existeFicheroDatos(self.__fecha):
@@ -66,17 +66,17 @@ class ObtenerPrecio():
             spinner.ok(self.__config["META"]["ICONO_OK"])
         
         with yaspin(text="Comprobando que los datos no son repetidos") as spinner:
-        # Almacenamos por separado los valores correspondientes a la __fecha de la petición y al listado de los precios de las estaciones de servicio
+        # Almacenamos por separado los valores correspondientes a la fecha de la petición y al listado de los precios de las estaciones de servicio
             try:
-                self.__fecha = json_data["__fecha"].split(" ")[0].replace("/", "-")
+                self.__fecha = json_data["Fecha"].split(" ")[0].replace("/", "-")
                 #__fecha = obtener__fechaUltimaModificacionWeb()
                 self.__precios_raw = json_data["ListaEESSPrecio"]
             
                 # Si dispongo de datos para ese día se para el programa para evitar duplicidades en los datos
                 if self.__Utils.yaTengoLosDatos(self.__fecha): 
                     spinner.ok(self.__config["META"]["ICONO_OK"])
-                    print(f"👌 Ya se disponen de los datos para la __fecha: {self.__fecha}")
-                    log.info(f"Ya se disponen de los datos para la __fecha: {self.__fecha}")
+                    print(f"👌 Ya se disponen de los datos para la fecha: {self.__fecha}")
+                    log.info(f"Ya se disponen de los datos para la fecha: {self.__fecha}")
                     sys.exit(0)
                 spinner.ok(self.__config["META"]["ICONO_OK"])
 
@@ -96,8 +96,8 @@ class ObtenerPrecio():
                             
                 self.__formatearPreciosCombustible()
                 
-                # Insertamos una columna correspondiente a la __fecha para poder distinguir entre los precios en distintos días
-                self.__preciosEESS.insert(0, "__fecha", self.__fecha)
+                # Insertamos una columna correspondiente a la fecha para poder distinguir entre los precios en distintos días
+                self.__preciosEESS.insert(0, "Fecha", self.__fecha)
                 spinner.ok(self.__config["META"]["ICONO_OK"])
             except Exception as e:
                 spinner.fail(self.__config["META"]["ICONO_ERROR"])
@@ -115,12 +115,12 @@ class ObtenerPrecio():
         self.__preciosCCAA = self.__preciosCCAA.replace({"IDCCAA": self.__config["EESS"]["CCAA"]}) 
         # Renombramos la columna para que el título se corresponda con su contenido
         self.__preciosCCAA.rename(columns={"IDCCAA": "CCAA"}, inplace=True)
-        # Insertamos el valor de la __fecha del día
-        self.__preciosCCAA.insert(0, "__fecha", self.__fecha)  
+        # Insertamos el valor de la fecha del día
+        self.__preciosCCAA.insert(0, "Fecha", self.__fecha)  
         
 
     def __calcularPrecioProvincias(self):
         # Agrupamos los datos por provincia y calculamos la media
         self.__preciosProvincia = self.__preciosEESS.groupby(["Provincia"], as_index=False).mean().round(3)
-        # Insertamos el valor de la __fecha del día
-        self.__preciosProvincia.insert(0, "__fecha", self.__fecha)  
+        # Insertamos el valor de la fecha del día
+        self.__preciosProvincia.insert(0, "Fecha", self.__fecha)  
