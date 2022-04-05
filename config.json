@@ -88,7 +88,8 @@
             "Precio Gasolina 98 E5",
             "Precio Gasolina 98 E10"
         ],
-        "RUTA_GRAFICO": "assets/graficos/",
-        "PALETA": "tab20"
+        "RUTA_GUARDAR_GENERAL": "docs/_includes/figuras/",
+        "RUTA_GUARDAR_CCAA": "docs/_includes/figuras/CCAA/",
+        "RUTA_GUARDAR_PROVINCIA": "docs/_includes/figuras/PROVINCIAS/"
     }
 }
