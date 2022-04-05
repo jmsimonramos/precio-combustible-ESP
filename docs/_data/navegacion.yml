@@ -1,0 +1,19 @@
+menu:
+  - titulo: Inicio
+    enlace: /
+    hijos: 
+
+  - titulo: Comunidades Autónomas
+    hijos: 
+      - titulo: Comunidades Autónomas
+        enlace: CCAA
+      - titulo: Comparativa
+        enlace: comparativaCCAA
+  
+  - titulo: Provincias
+    enlace: provincias
+    hijos:
+      - titulo: Provincias
+        enlace: provincias
+      - titulo: Comparativa
+        enlace: comparativaProvincias        

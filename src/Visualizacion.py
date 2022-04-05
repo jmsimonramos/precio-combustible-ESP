@@ -1,24 +1,26 @@
 from unittest import expectedFailure
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import os, sys
 from src.Utils import Utils
 from src.IO import IO
 from yaspin import yaspin
 import logging as log
+import plotly.express as px
+import plotly.graph_objects as go
+import unidecode
+import plotly as plo
+
 class Visualizacion():
     def __init__(self):
         self.__Utils = Utils()
         self.__config = IO().cargarConfiguracion()
-        self.__df_MedioCCAA = pd.DataFrame()
-        self.__df_MedioProvincia = pd.DataFrame()
+        self.__dfCCAA = pd.DataFrame()
+        self.__dfProvincia = pd.DataFrame()
+        self.__dfHistorico = pd.DataFrame()
 
         # Configuramos el log con la ruta del fichero, el modo de uso (a = añadir al final del fichero), el formato del mensaje (tiempo - tipoError - mensaje) y la prioridad mínima(DEBUG = más baja, por lo que cualquier aviso se registrará en el log)
         log.basicConfig(filename=self.__config["META"]["LOG_PATH"], filemode="a", format='%(asctime)s - %(levelname)s - %(message)s', datefmt=self.__config["META"]["FORMATO_FECHA_LOG"], level=log.DEBUG)
-        # Configuramos parámetros para la generación de los gráficos        
-        sns.set_context({"figure.figsize": (16,9)}) # Tamaño figura
-        sns.set(style="whitegrid", rc={"lines.linewidth": 2}) # Grosor líneas
+        
     
     def generarVisualizaciones(self):
         with yaspin(text="Cargando datos para la visualización") as spinner:
@@ -45,47 +47,144 @@ class Visualizacion():
     def __cargarDatosCCAA(self):
         # Obtenemos todos los ficheros de todos los meses disponibles para las CCAA
         lista_precios_ccaa = sorted([file for file in os.listdir(self.__config["VISUALIZACION"]["RUTA_CCAA"])]) #
-        df_CCAA = pd.DataFrame()
+        
         # Cargamos los datos de cada fichero y los concatenamos para generar un dataset con todo el histórico
         for fichero in lista_precios_ccaa:
             df_aux = pd.read_csv(f"{self.__config['VISUALIZACION']['RUTA_CCAA']}{fichero}", sep=";", encoding="utf-8")
-            df_CCAA = pd.concat([df_CCAA, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
+            self.__dfCCAA = pd.concat([self.__dfCCAA, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
 
-        self.__df_MedioCCAA = df_CCAA.groupby(["Fecha", "CCAA"], as_index=False).mean().round(3) # Agrupamos los datos por fecha y CCAA y calculamos la media de los precios para cada tipo de combustible
+        self.__dfHistorico = self.__dfCCAA.groupby(["Fecha"], as_index=False).mean().round(3) # Utilizamos el dataset de las CCAA para obtener el valor medio del combustible a nivel nacional
+
     
     def __cargarDatosProvincia(self):
         # Obtenemos todos los ficheros de todos los meses disponibles para las Provincias
         lista_precios_provincia = sorted([file for file in os.listdir(self.__config["VISUALIZACION"]["RUTA_PROVINCIA"])])
-        df_Provincia = pd.DataFrame()
+        
         # Cargamos los datos de cada fichero y los concatenamos para generar un dataset con todo el histórico
         for fichero in lista_precios_provincia:
             df_aux = pd.read_csv(f"{self.__config['VISUALIZACION']['RUTA_PROVINCIA']}{fichero}", sep=";", encoding="utf-8")
-            df_Provincia = pd.concat([df_Provincia, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
-
-        self.__df_MedioProvincia = df_Provincia.groupby(["Fecha", "Provincia"], as_index=False).mean().round(3) # Agrupamos los datos por fecha y CCAA y calculamos la media de los precios para cada tipo de combustible
-    
+            self.__dfProvincia = pd.concat([self.__dfProvincia, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
+        
     def __generarGraficos(self):
         # Generamos gráficos de líneas de forma dinámica para cada combustible fijado en la configuración
-        for variable in self.__config["VISUALIZACION"]["COMBUSTIBLES_MOSTRAR"]:
-            fig = sns.lineplot(x="Fecha", y = variable, data=self.__df_MedioCCAA, hue="CCAA", palette=self.__config["VISUALIZACION"]["PALETA"]) # Gráfico de líneas
-            # Repetimos los parámetros del gráfico anterior con un scatterplot para que aparezcan marcas en el cruce de los ejes
-            sns.scatterplot(x="Fecha", y = variable, data=self.__df_MedioCCAA, hue="CCAA", legend=False, palette=self.__config["VISUALIZACION"]["PALETA"])
-            # Modificamos el título del gráfico y de la leyenda, así como la posición de esta en el gráfico (fuera de el y a la derecha)
-            plt.title(f"Evolución del precio del {variable} por Comunidades Autónomas", fontdict={"fontsize": 19, "fontweight": "bold"})
-            plt.legend(title = "CCAA", bbox_to_anchor=(1, 1.05))
-            # Exportamos el gráfico para que este se actualice en el README
-            self.__Utils.guardarFigura(fig, f'{self.__config["VISUALIZACION"]["RUTA_GRAFICO"]}CCAA-{variable.replace(" ","")}.png')
-            plt.clf() # Limpiamos la figura para evitar que se añadan gráficos unos encima de otros
-                        
-            # PROVINCIAS
-            # Se realiza el mismo proceso que para las CCAA
-            fig = sns.lineplot(x="Fecha", y = variable, data=self.__df_MedioProvincia, hue="Provincia") # Gráfico de líneas
-            
-            sns.scatterplot(x="Fecha", y = variable, data=self.__df_MedioProvincia, hue="Provincia", legend=False) # Gráfico con las marcas en el cruce de los ejes
+        self.__generarGraficosGenerales()
+        self.__generarGraficosCCAA()
+        self.__generarGraficosProvincias()
 
-            # Modificación del título del gráfico y la leyenda
-            plt.title(f"Evolución del precio del {variable} por Provincias", fontdict={"fontsize": 19, "fontweight": "bold"})
-            plt.legend(title = "PROVINCIAS", bbox_to_anchor=(1, 1.05))
-            # Exportar el gráfico
-            self.__Utils.guardarFigura(fig, f'{self.__config["VISUALIZACION"]["RUTA_GRAFICO"]}PROVINCIAS-{variable.replace(" ","")}.png')
-            plt.clf() # Limpiar la figura
+    def __generarGraficosGenerales(self):
+        fig = go.Figure()
+        for combustible in self.__dfHistorico.columns[1:-2]:
+            fig.add_trace(go.Scatter(
+                x = self.__dfHistorico["Fecha"],
+                y = self.__dfHistorico[combustible],
+                name = f"{combustible}",
+                hovertemplate="<br>".join([
+                "Fecha: %{x}",
+                "Precio (€): %{y}",
+                ])
+            ))
+        fig.update_layout(
+            title="Evolución del precio medio del combustible en España",
+            xaxis_title="Fecha",
+            yaxis_title="Precio (€)",
+            legend_title="Combustible",
+        )
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}evolucionPrecio.html", include_plotlyjs=False, full_html=False)
+
+        datos = self.__dfHistorico.tail(2)
+        fig = go.Figure(data=[
+            go.Bar(
+                name = f"Ayer {datos.head(1)['Fecha'].values[0]}",
+                x = datos.head(1).columns[1:].values,
+                y = datos.head(1).iloc[:, 1:].values[0],
+                text = datos.head(1).iloc[:, 1:].values[0],
+                textposition = 'auto',
+                hovertemplate="<br>".join([
+                    "Combustible: %{x}",
+                    "Precio (€): %{y}",
+                ])
+            ),
+            go.Bar(
+                name = f"Hoy {datos.tail(1)['Fecha'].values[0]}",
+                x = datos.tail(1).columns[1:].values,
+                y = datos.tail(1).iloc[:, 1:].values[0],
+                text = datos.head(1).iloc[:, 1:].values[0],
+                textposition = 'auto',
+                hovertemplate="<br>".join([
+                    "Combustible: %{x}",
+                    "Precio (€): %{y}",
+                ])
+            )
+
+        ])
+        fig.update_layout(
+            title="Comparativa precios combustible últimos días",
+            xaxis_title="Tipo de Combustible",
+            yaxis_title="Precio (€)",
+            legend_title="Día",
+            barmode='group',
+        )
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecio.html", include_plotlyjs=False, full_html=False)
+        
+    def __generarGraficosCCAA(self):
+        for combustible in self.__dfCCAA.columns[2:-2]:
+            fig = px.line(self.__dfCCAA, x='Fecha', y=combustible, color='CCAA', markers=True, title=f"Evolución del precio del {combustible.replace('Precio ', '')} por Comunidad Autónoma")
+            
+            plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_CCAA']}evolucion{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
+
+        # COMPARATIVA CCAA
+        fig = go.Figure()
+        for ccaa in self.__dfCCAA.CCAA.unique():
+            datos = self.__dfCCAA[self.__dfCCAA["CCAA"] == ccaa]
+            for combustible in self.__dfCCAA.columns[2:-2]:
+                fig.add_trace(
+                    go.Scatter(
+                        x = datos["Fecha"],
+                        y = datos[combustible],
+                        name = f"{combustible}-{ccaa}",
+                        visible = "legendonly",
+                        hovertemplate="<br>".join([
+                        "Fecha: %{x}",
+                        "Precio (€): %{y}",
+                        ])
+                    )
+            )
+
+        fig.update_layout(
+            title="Comparativa precios por Comunidad Autónoma",
+            xaxis_title="Fecha",
+            yaxis_title="Precio (€)",
+            legend_title="Combustible + CCAA",
+        )
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_CCAA']}comparativaPrecios.html", include_plotlyjs=False, full_html=False)
+    
+    def __generarGraficosProvincias(self):
+        for combustible in self.__dfProvincia.columns[2:-2]:
+            fig = px.line(self.__dfProvincia, x='Fecha', y=combustible, color='Provincia', markers=True, title=f"Evolución del precio del {combustible.replace('Precio ', '')} por Provincias")
+            
+            plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_PROVINCIA']}evolucion{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
+        
+        # COMPARATIVA PROVINCIAS
+        fig = go.Figure()
+        for provincia in self.__dfProvincia.Provincia.unique():
+            datos = self.__dfProvincia[self.__dfProvincia["Provincia"] == provincia]
+            for combustible in self.__dfProvincia.columns[2:-2]:
+                fig.add_trace(
+                    go.Scatter(
+                        x = datos["Fecha"],
+                        y = datos[combustible],
+                        name = f"{combustible}-{provincia}",
+                        visible = "legendonly",
+                        hovertemplate="<br>".join([
+                        "Fecha: %{x}",
+                        "Precio (€): %{y}",
+                        ])
+                    )
+            )
+        fig.update_layout(
+            title="Comparativa precios del combustible por Provincia",
+            xaxis_title="Fecha",
+            yaxis_title="Precio (€)",
+            legend_title="Combustible + Provincia",
+        )
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_PROVINCIA']}comparativaPrecios.html", include_plotlyjs=False, full_html=False)
