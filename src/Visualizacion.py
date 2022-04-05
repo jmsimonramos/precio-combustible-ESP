@@ -7,8 +7,9 @@ from yaspin import yaspin
 import logging as log
 import plotly.express as px
 import plotly.graph_objects as go
-import unidecode
 import plotly as plo
+import unidecode
+import geopandas as gpd
 
 class Visualizacion():
     def __init__(self):
@@ -17,6 +18,8 @@ class Visualizacion():
         self.__dfCCAA = pd.DataFrame()
         self.__dfProvincia = pd.DataFrame()
         self.__dfHistorico = pd.DataFrame()
+        self.__mapaCCAA = pd.DataFrame()
+        self.__mapaProvincia = pd.DataFrame()
 
         # Configuramos el log con la ruta del fichero, el modo de uso (a = añadir al final del fichero), el formato del mensaje (tiempo - tipoError - mensaje) y la prioridad mínima(DEBUG = más baja, por lo que cualquier aviso se registrará en el log)
         log.basicConfig(filename=self.__config["META"]["LOG_PATH"], filemode="a", format='%(asctime)s - %(levelname)s - %(message)s', datefmt=self.__config["META"]["FORMATO_FECHA_LOG"], level=log.DEBUG)
@@ -27,6 +30,7 @@ class Visualizacion():
             try:
                 self.__cargarDatosCCAA() # Cargamos los datos de los precios por CCAA
                 self.__cargarDatosProvincia() # Cargamos los datos de los precios por Provincias
+                self.__cargarDatosMapa() # Cargamos los datos del mapa
                 spinner.ok(self.__config["META"]["ICONO_OK"])
             except Exception as e:
                 print(e)
@@ -44,6 +48,19 @@ class Visualizacion():
                 log.error(f"Error inesperado. {e}")
                 sys.exit(0)
     
+    def __cargarDatosMapa(self):
+        self.__mapaCCAA = self.__dfCCAA.groupby(["Fecha", "CCAA"], as_index=False).mean().round(3)
+        self.__mapaCCAA = self.__mapaCCAA[self.__mapaCCAA["Fecha"] == self.__config["META"]["ULTIMO_DIA"]].drop(columns=["Fecha"])
+
+        self.__mapaCCAA = gpd.GeoDataFrame.from_file(f"{self.__config['VISUALIZACION']['RUTA_MAPA']}CCAA.json").merge(self.__mapaCCAA, on="CCAA").drop(columns=["id"]).set_index("CCAA")
+
+        # DATOS MAPA PROVINCIAS
+
+        self.__mapaProvincia = self.__dfProvincia.groupby(["Fecha", "Provincia"], as_index=False).mean().round(3)#
+        self.__mapaProvincia = self.__mapaProvincia[self.__mapaProvincia["Fecha"] == self.__config["META"]["ULTIMO_DIA"]].drop(columns=["Fecha"])
+
+        self.__mapaProvincia = gpd.GeoDataFrame.from_file(f"{self.__config['VISUALIZACION']['RUTA_MAPA']}PROVINCIAS.json").merge(self.__mapaProvincia, on="Provincia").drop(columns=["id"]).set_index("Provincia")
+
     def __cargarDatosCCAA(self):
         # Obtenemos todos los ficheros de todos los meses disponibles para las CCAA
         lista_precios_ccaa = sorted([file for file in os.listdir(self.__config["VISUALIZACION"]["RUTA_CCAA"])]) #

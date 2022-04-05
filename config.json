@@ -90,6 +90,7 @@
         ],
         "RUTA_GUARDAR_GENERAL": "docs/_includes/figuras/",
         "RUTA_GUARDAR_CCAA": "docs/_includes/figuras/CCAA/",
-        "RUTA_GUARDAR_PROVINCIA": "docs/_includes/figuras/PROVINCIAS/"
+        "RUTA_GUARDAR_PROVINCIA": "docs/_includes/figuras/PROVINCIAS/",
+        "RUTA_MAPA": "data/geo/"
     }
 }
