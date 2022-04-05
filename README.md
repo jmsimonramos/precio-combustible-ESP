@@ -1,19 +1,20 @@
 ## Índice
+1. [📊 Dashboard Interactivo](#Dashboard)
+2. [📝 Introducción](#Introducción)
+3. [💿 Obtención de los Datos](#Obtención_De_Los_Datos)
+4. [📚 Conjuntos de Datos](#Conjuntos_De_Datos)
+5. [⛽️ Dataset Estaciones de Servicio](#Dataset_Estaciones_De_Servicio)
+6. [💶 Dataset Precio Combustible Mensual](#Dataset_Precio_Combustible_Mensual)
+7. [⚙️ Pruebas de Ejecución](#Pruebas_De_Ejecución)
 
-1. [Introducción](#Introducción)
-2. [Obtención de los Datos](#Obtención_De_Los_Datos)
-3. [Conjuntos de Datos](#Conjuntos_De_Datos)
-4. [Dataset Estaciones de Servicio](#Dataset_Estaciones_De_Servicio)
-5. [Dataset Precio Combustible Mensual](#Dataset_Precio_Combustible_Mensual)
-6. [Pruebas de Ejecución](#Pruebas_De_Ejecución)
-7. [Gráficas Histórico de precios (Actualización diaria)](#Graficas)
+# 📊 Dashboard Interactivo <a name="Dashboard"></a>
+Visualización de los datos de forma interactiva.
 
-
-# Introducción <a name="Introducción"></a>
+# 📝 Introducción <a name="Introducción"></a>
 
 El objetivo del repositorio consiste en disponer de una forma abierta y fácilmente accesible el histórico de los precios de los combustibles en las distintas estaciones de servicio de España. Esto se debe a que la fuente oficial de la que se ha extraído esta información ([Datos Abiertos del Gobierno de España](https://datos.gob.es/es/catalogo/e05068001-precio-de-carburantes-en-las-gasolineras-espanolas)) proporciona estos datos de forma diaria, pero el acceso al histórico de precios es más tedioso y es necesario establecer un gran número de filtros para obtener esta información. Debido a ello, esta propuesta busca proporcionar un conjunto de datos en el que se muestren los precios diarios de los combustibles en todas las estaciones de servicio españolas de una forma más rápida y eficiente.
 
-# Obtención de los datos <a name="Obtención_De_Los_Datos"></a>
+# 💿 Obtención de los datos <a name="Obtención_De_Los_Datos"></a>
 
 La obtención de los datos se realiza de forma automática a partir del un servicio REST oficial de [Datos Abiertos del Gobierno de España](https://datos.gob.es/es/catalogo/e05068001-precio-de-carburantes-en-las-gasolineras-espanolas) (Ver Figura 1 y 2). Todos los días se ejecuta el script *obtenerPrecioCombustible.py* el cuál procesa la información de los precios, elimina las columnas innecesarias y le añade la fecha del día actual para así poder filtrar por ella posteriormente.
 
@@ -30,16 +31,13 @@ El motivo de eliminar columnas se debe a que cada uno de los registros que devue
 
 ![Datos Precio Combustible Procesado](assets/datosPrecioCombustibleProcesados.png)
 **Figura 4: Datos procesados de los precios del combustible en las distintas Estaciones de Servicio.**
-
-
-
-# Conjuntos de datos <a name="Conjuntos_De_Datos"></a>
+# 📚 Conjuntos de datos <a name="Conjuntos_De_Datos"></a>
 
 Como se ha mencionado anteriormente, se ha dividido la información en dos conjuntos de datos distintos: *data/EESS.csv*, con la información de la Estación de Servicio; y *data/historico/precioEESS-{mes}-{año}.csv*, con los precios del combustible en cada Estación de Servicio para cada uno de los días de un determinado mes.
 
 La forma de combinar los datos de ambos conjuntos es mediante el atributo **IDEESS**.
 
-## Dataset Estaciones de Servicio <a name="Dataset_Estaciones_De_Servicio"></a>
+## ⛽️ Dataset Estaciones de Servicio <a name="Dataset_Estaciones_De_Servicio"></a>
 
 El conjunto de datos *EESS.csv* se encuentra formado por los siguientes atributos:
 
@@ -59,7 +57,7 @@ El conjunto de datos *EESS.csv* se encuentra formado por los siguientes atributo
 | Provincia        | Provincia a la que pertenece la Estación de Servicio                                              | Str      |
 | CCAA           | Nombre de la Comunidad Autónoma a la que pertenece la Estación de Servicio                 | Str      |
 
-## Dataset precio combustible mensual <a name="Dataset_Precio_Combustible_Mensual"></a>
+## 💶 Dataset precio combustible mensual <a name="Dataset_Precio_Combustible_Mensual"></a>
 
 El conjunto de datos *precioEESS-{mes}-{año}.csv* se encuentra formado por los siguientes atributos:
 
@@ -83,7 +81,7 @@ El conjunto de datos *precioEESS-{mes}-{año}.csv* se encuentra formado por los 
 | % BioEtanol                        | Porcentaje de BioEtanol                                              | Float    |
 | % Éster metílico                   | Porcentaje de éster metílico                                         | Float    |
 
-# Pruebas de Ejecución <a name="Pruebas_De_Ejecución"></a>
+# ⚙️ Pruebas de Ejecución <a name="Pruebas_De_Ejecución"></a>
 
 Para ejecutar el script hay que ejecutar el comando `python obtenerPrecioCombustible.py` desde la raíz del proyecto.
 
@@ -92,56 +90,3 @@ Para ejecutar el script hay que ejecutar el comando `python obtenerPrecioCombust
 
 ![Prueba de Ejecución cuando ya existen datos](assets/demoExistenDatos.gif)
 **Video 2: Ejecución del script cuando ya se disponen de los datos del día.**
-
-# Gráficas Histórico de precios <a name="Graficas"></a>
-
-## CCAA
-
-* Gasóleo A
-![Precio Gasoleo A CCAA](assets/graficos/CCAA-PrecioGasoleoA.png)
-**Figura 5: Histórico Precio Gasóleo A por Comunidad Autónoma.**
-
-* Gasóleo Premium
-![Precio Gasoleo Premium CCAA](assets/graficos/CCAA-PrecioGasoleoPremium.png)
-**Figura 5: Histórico Precio Gasóleo Premium por Comunidad Autónoma.**
-
-* Precio Gasolina 95 E5
-![Precio Gasolina 95 E5 CCAA](assets/graficos/CCAA-PrecioGasolina95E5.png)
-**Figura 6: Histórico Precio Gasolina 95 E5 por Comunidad Autónoma.**
-
-* Precio Gasolina 95 E10
-![Precio Gasolina 95 E10 CCAA](assets/graficos/CCAA-PrecioGasolina95E10.png)
-**Figura 7: Histórico Precio Gasolina 95 E10 por Comunidad Autónoma.**
-
-* Precio Gasolina 98 E5
-![Precio Gasolina 98 E5 CCAA](assets/graficos/CCAA-PrecioGasolina98E5.png)
-**Figura 8: Histórico Precio Gasolina 98 E5 por Comunidad Autónoma.**
-
-* Precio Gasolina 98 E10
-![Precio Gasolina 98 E10 CCAA](assets/graficos/CCAA-PrecioGasolina98E10.png)
-**Figura 9: Histórico Precio Gasolina 98 E10 por Comunidad Autónoma.**
-
-## Provincias
-* Gasóleo A
-![Precio Gasoleo A Provincia](assets/graficos/PROVINCIAS-PrecioGasoleoA.png)
-**Figura 10: Histórico Precio Gasóleo A por Provincias.**
-
-* Gasóleo Premium
-![Precio Gasoleo Premium Provincia](assets/graficos/PROVINCIAS-PrecioGasoleoPremium.png)
-**Figura 11: Histórico Precio Gasóleo Premium por Provincias.**
-
-* Precio Gasolina 95 E5
-![Precio Gasolina 95 E5 Provincia](assets/graficos/PROVINCIAS-PrecioGasolina95E5.png)
-**Figura 12: Histórico Precio Gasolina 95 E5 por Provincias.**
-
-* Precio Gasolina 95 E10
-![Precio Gasolina 95 E10 Provincia](assets/graficos/PROVINCIAS-PrecioGasolina95E10.png)
-**Figura 13: Histórico Precio Gasolina 95 E10 por Provincias.**
-
-* Precio Gasolina 98 E5
-![Precio Gasolina 98 E5 Provincia](assets/graficos/PROVINCIAS-PrecioGasolina98E5.png)
-**Figura 14: Histórico Precio Gasolina 98 E5 por Provincias.**
-
-* Precio Gasolina 98 E10
-![Precio Gasolina 98 E10 Provincia](assets/graficos/PROVINCIAS-PrecioGasolina98E10.png)
-**Figura 15: Histórico Precio Gasolina 98 E10 por Provincias.**

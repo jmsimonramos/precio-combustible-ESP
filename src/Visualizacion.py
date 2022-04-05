@@ -91,7 +91,7 @@ class Visualizacion():
         )
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}evolucionPrecio.html", include_plotlyjs=False, full_html=False)
 
-        datos = self.__dfHistorico.tail(2)
+        datos = self.__dfHistorico.tail(2)[self.__dfHistorico.columns[:-2]]
         fig = go.Figure(data=[
             go.Bar(
                 name = f"Ayer {datos.head(1)['Fecha'].values[0]}",

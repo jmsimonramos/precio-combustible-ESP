@@ -4,12 +4,11 @@ from src.Utils import Utils
 
 if __name__ == "__main__":
     # Obtenemos los precios de los combustibles
-    #obtenerPrecio = ObtenerPrecio()
-    #obtenerPrecio.obtenerPrecioCombustible()
+    obtenerPrecio = ObtenerPrecio()
+    obtenerPrecio.obtenerPrecioCombustible()
 
     # Generamos los gráficos
     Visualizacion().generarVisualizaciones()
     
     # Hacemos un commit con los cambios y los subimos al repositorio remoto
-
-    #Utils().commitActualizacionesPrecios()
+    Utils().commitActualizacionesPrecios()
