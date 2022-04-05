@@ -1,17 +1,19 @@
-patata: "HEEH"
 menu:
   - titulo: Inicio
-    enlace: "/"
+    enlace: /
     hijos: 
 
   - titulo: Comunidades Autónomas
-    enlace: "ccaa.html"
     hijos: 
+      - titulo: Comunidades Autónomas
+        enlace: CCAA
       - titulo: Comparativa
-        enlace: comparativa-ccaa
+        enlace: comparativaCCAA
   
   - titulo: Provincias
-    enlace: "provincias.html"
+    enlace: provincias
     hijos:
+      - titulo: Provincias
+        enlace: provincias
       - titulo: Comparativa
-        enlace: comparativa-provincia        
+        enlace: comparativaProvincias        
