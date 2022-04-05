@@ -1,11 +1,79 @@
 ---
 layout: default
 ---
+<script>
+    // Una vez cargue la página cambiamos el tipo de display a flex ya que si lo hacemos antes de que se renderizen los gráficos no funcionaría
+    window.onload = function() {
+        var elementos = document.getElementsByClassName("mapas");
+        for (let i = 0; i < elementos.length; i++) {
+            elementos[i].style.display = "flex";
+        }
+    };
+</script>
 
 <div class="contenido">
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioBiodiesel.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioBiodiesel.html %}
+    </div>
+    
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioBioetanol.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioBioetanol.html %}
+    </div>
+
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGaseslicuadosdelpetroleo.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGaseslicuadosdelpetroleo.html %}
+    </div>
+
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGasNaturalComprimido.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGasNaturalComprimido.html %}
+    </div>
+
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGasNaturalLicuado.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGasNaturalLicuado.html %}
+    </div>
+
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGasoleoA.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGasoleoA.html %}
+    </div>
+
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGasoleoB.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGasoleoB.html %}
+    </div>
+
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGasoleoPremium.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGasoleoPremium.html %}
+    </div>
+
     <div class="mapas">
         {% include figuras/MAPAS/CCAA-PrecioGasolina95E5.html %}
         {% include figuras/MAPAS/PROVINCIA-PrecioGasolina95E5.html %}
     </div>
 
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGasolina95E5Premium.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGasolina95E5Premium.html %}
+    </div>
+
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGasolina95E10.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGasolina95E10.html %}
+    </div>
+
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGasolina98E5.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGasolina98E5.html %}
+    </div>
+
+    <div class="mapas">
+        {% include figuras/MAPAS/CCAA-PrecioGasolina98E10.html %}
+        {% include figuras/MAPAS/PROVINCIA-PrecioGasolina98E10.html %}
+    </div>
 </div>

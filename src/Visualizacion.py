@@ -1,3 +1,4 @@
+from turtle import width
 from unittest import expectedFailure
 import pandas as pd
 import os, sys
@@ -101,7 +102,8 @@ class Visualizacion():
                 mapbox_style="open-street-map",
                 zoom=4,
                 color_continuous_scale= self.__config["VISUALIZACION"]["PALETA"],
-                title = f"Mapa de Comunidades Autónomas con la media del {combustible} de hoy ({self.__config['META']['ULTIMO_DIA']})"
+                title = f"Mapa de Comunidades Autónomas con la media del<br> {combustible} de hoy ({self.__config['META']['ULTIMO_DIA']})",
+                width = 550
             )
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}CCAA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
@@ -116,7 +118,8 @@ class Visualizacion():
                 mapbox_style="open-street-map",
                 zoom=4,
                 color_continuous_scale= self.__config["VISUALIZACION"]["PALETA"],
-                title = f"Mapa de Provincias con la media del {combustible} de hoy ({self.__config['META']['ULTIMO_DIA']})"
+                title = f"Mapa de Provincias con la media del<br> {combustible} de hoy ({self.__config['META']['ULTIMO_DIA']})",
+                width = 550
             )
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}PROVINCIA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
