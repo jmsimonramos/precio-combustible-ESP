@@ -83,7 +83,6 @@ body {
   color: blue;
 }
 
-
 .toc-title {
   font-weight: 700;
   text-align: center;
@@ -91,4 +90,7 @@ body {
 
 .contenido{
   margin-top: 40px;
+}
+.mapas{
+  display: block;
 }

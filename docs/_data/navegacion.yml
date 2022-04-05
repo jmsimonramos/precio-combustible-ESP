@@ -2,7 +2,11 @@ menu:
   - titulo: Inicio
     enlace: /
     hijos: 
-
+  
+  - titulo: Mapas
+    enlace: mapas
+    hijos: 
+  
   - titulo: Comunidades Autónomas
     hijos: 
       - titulo: Comunidades Autónomas

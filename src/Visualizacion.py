@@ -85,8 +85,40 @@ class Visualizacion():
     def __generarGraficos(self):
         # Generamos gráficos de líneas de forma dinámica para cada combustible fijado en la configuración
         self.__generarGraficosGenerales()
+        self.__generarGraficosMapa()
         self.__generarGraficosCCAA()
         self.__generarGraficosProvincias()
+
+    def __generarGraficosMapa(self):
+        # CCAA
+        for combustible in self.__dfCCAA.columns[2:-2]:
+            fig = px.choropleth_mapbox(
+                self.__mapaCCAA,
+                geojson=self.__mapaCCAA.geometry,
+                locations=self.__mapaCCAA.index,
+                color=combustible,
+                center={"lat": 40.4165, "lon": -3.70256},
+                mapbox_style="open-street-map",
+                zoom=4,
+                color_continuous_scale= self.__config["VISUALIZACION"]["PALETA"],
+                title = f"Mapa de Comunidades Autónomas con la media del {combustible} de hoy ({self.__config['META']['ULTIMO_DIA']})"
+            )
+            plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}CCAA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
+
+        # PROVINCIAS
+        for combustible in self.__dfProvincia.columns[2:-2]:
+            fig = px.choropleth_mapbox(
+                self.__mapaProvincia,
+                geojson=self.__mapaProvincia.geometry,
+                locations=self.__mapaProvincia.index,
+                color=combustible,
+                center={"lat": 40.4165, "lon": -3.70256},
+                mapbox_style="open-street-map",
+                zoom=4,
+                color_continuous_scale= self.__config["VISUALIZACION"]["PALETA"],
+                title = f"Mapa de Provincias con la media del {combustible} de hoy ({self.__config['META']['ULTIMO_DIA']})"
+            )
+            plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}PROVINCIA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
     def __generarGraficosGenerales(self):
         fig = go.Figure()
