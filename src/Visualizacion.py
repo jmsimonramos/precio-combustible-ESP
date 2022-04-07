@@ -1,6 +1,5 @@
 import pandas as pd
 import os, sys
-from src.Utils import Utils
 from src.IO import IO
 from yaspin import yaspin
 import logging as log
@@ -9,10 +8,10 @@ import plotly.graph_objects as go
 import plotly as plo
 import unidecode
 import geopandas as gpd
+import datetime
 
 class Visualizacion():
     def __init__(self):
-        self.__Utils = Utils()
         self.__config = IO().cargarConfiguracion()
         self.__dfCCAA = pd.DataFrame()
         self.__dfProvincia = pd.DataFrame()
@@ -121,6 +120,14 @@ class Visualizacion():
             )
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}PROVINCIA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
+    def __calcularPreciosSemanaPasada(self):
+        hoy = datetime.datetime.strptime(self.__config["META"]["ULTIMO_DIA"], '%d-%m-%Y').date()
+
+        semanaPasada = hoy - datetime.timedelta(days = 7)
+        semanaPasada = semanaPasada.strftime('%d-%m-%Y')
+
+        return self.__dfHistorico[self.__dfHistorico["Fecha"] == semanaPasada][self.__dfHistorico.columns[:-2]]
+
     def __generarGraficosGenerales(self):
         fig = go.Figure()
         for combustible in self.__dfHistorico.columns[1:-2]:
@@ -141,13 +148,14 @@ class Visualizacion():
         )
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}evolucionPrecio.html", include_plotlyjs=False, full_html=False)
 
-        datos = self.__dfHistorico.tail(2)[self.__dfHistorico.columns[:-2]]
+        datosHoy = self.__dfHistorico[self.__dfHistorico["Fecha"] == self.__config["META"]["ULTIMO_DIA"]][self.__dfHistorico.columns[:-2]]
+        datosSemanaPasada = self.__calcularPreciosSemanaPasada()
         fig = go.Figure(data=[
             go.Bar(
-                name = f"Ayer {datos.head(1)['Fecha'].values[0]}",
-                x = datos.head(1).columns[1:].values,
-                y = datos.head(1).iloc[:, 1:].values[0],
-                text = datos.head(1).iloc[:, 1:].values[0],
+                name = f"Hoy {datosHoy.head(1)['Fecha'].values[0]}",
+                x = datosHoy.head(1).columns[1:].values,
+                y = datosHoy.head(1).iloc[:, 1:].values[0],
+                text = datosHoy.head(1).iloc[:, 1:].values[0],
                 textposition = 'auto',
                 hovertemplate="<br>".join([
                     "Combustible: %{x}",
@@ -155,10 +163,10 @@ class Visualizacion():
                 ])
             ),
             go.Bar(
-                name = f"Hoy {datos.tail(1)['Fecha'].values[0]}",
-                x = datos.tail(1).columns[1:].values,
-                y = datos.tail(1).iloc[:, 1:].values[0],
-                text = datos.head(1).iloc[:, 1:].values[0],
+                name = f"Semana Pasada {datosSemanaPasada.head(1)['Fecha'].values[0]}",
+                x = datosSemanaPasada.head(1).columns[1:].values,
+                y = datosSemanaPasada.head(1).iloc[:, 1:].values[0],
+                text = datosSemanaPasada.head(1).iloc[:, 1:].values[0],
                 textposition = 'auto',
                 hovertemplate="<br>".join([
                     "Combustible: %{x}",
@@ -168,7 +176,7 @@ class Visualizacion():
 
         ])
         fig.update_layout(
-            title="Comparativa precios combustible últimos días",
+            title="Comparativa precios combustible entre el día actual y la semana pasada",
             xaxis_title="Tipo de Combustible",
             yaxis_title="Precio (€)",
             legend_title="Día",
