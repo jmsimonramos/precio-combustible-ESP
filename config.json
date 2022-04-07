@@ -93,6 +93,8 @@
         "RUTA_GUARDAR_MAPA": "docs/_includes/figuras/MAPAS/",
         "RUTA_GUARDAR_PROVINCIA": "docs/_includes/figuras/PROVINCIAS/",
         "RUTA_MAPA": "data/geo/",
+        "ANCHO": 600,
+        "ZOOM": 3.8,
         "PALETA": [
             [
                 0.0,

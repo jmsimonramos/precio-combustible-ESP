@@ -7,71 +7,71 @@ layout: default
         var elementos = document.getElementsByClassName("mapas");
         for (let i = 0; i < elementos.length; i++) {
             elementos[i].style.display = "flex";
+            elementos[i].style.visibility = "visible";
         }
     };
 </script>
 
 <div class="contenido">
-    <div class="mapas">
-        {% include figuras/MAPAS/CCAA-PrecioBiodiesel.html %}
-        {% include figuras/MAPAS/PROVINCIA-PrecioBiodiesel.html %}
-    </div>
-    
-    <div class="mapas">
-        {% include figuras/MAPAS/CCAA-PrecioBioetanol.html %}
-        {% include figuras/MAPAS/PROVINCIA-PrecioBioetanol.html %}
-    </div>
-
-    <div class="mapas">
-        {% include figuras/MAPAS/CCAA-PrecioGaseslicuadosdelpetroleo.html %}
-        {% include figuras/MAPAS/PROVINCIA-PrecioGaseslicuadosdelpetroleo.html %}
-    </div>
-
-    <div class="mapas">
-        {% include figuras/MAPAS/CCAA-PrecioGasNaturalComprimido.html %}
-        {% include figuras/MAPAS/PROVINCIA-PrecioGasNaturalComprimido.html %}
+    <div id="indice">
+        <h3 class="toc-title">Índice</h3>
+        <ul>
+            <li><a href="#mapaGasoleoA">Mapa del precio del Gasóleo A</a></li>
+            <li><a href="#mapaGasoleoB">Mapa del precio del Gasóleo B</a></li>
+            <li><a href="#mapaGasoleoPre">Mapa del precio del Gasóleo Premium</a></li>
+            <li><a href="#mapaGasolina95E5">Mapa del precio de la Gasolina 95 E5</a></li>
+            <li><a href="#mapaGasolina95E5Pre">Mapa del precio de la Gasolina 95 E5 Premium</a></li>
+            <li><a href="#mapaGasolina95E10">Mapa del precio de la Gasolina 95 E10</a></li>
+            <li><a href="#mapaGasolina98E5">Mapa del precio de la Gasolina 98 E5</a></li>
+            <li><a href="#mapaGasolina98E10">Mapa del precio de la Gasolina 98 E10</a></li>
+        </ul>
     </div>
 
-    <div class="mapas">
-        {% include figuras/MAPAS/CCAA-PrecioGasNaturalLicuado.html %}
-        {% include figuras/MAPAS/PROVINCIA-PrecioGasNaturalLicuado.html %}
-    </div>
 
+
+    <h3 id="mapaGasoleoA">Mapa del precio del Gasóleo A</h3>
     <div class="mapas">
         {% include figuras/MAPAS/CCAA-PrecioGasoleoA.html %}
         {% include figuras/MAPAS/PROVINCIA-PrecioGasoleoA.html %}
     </div>
 
+    <h3 id="mapaGasoleoB">Mapa del precio del Gasóleo B</h3>
     <div class="mapas">
         {% include figuras/MAPAS/CCAA-PrecioGasoleoB.html %}
         {% include figuras/MAPAS/PROVINCIA-PrecioGasoleoB.html %}
     </div>
 
+    <h3 id="mapaGasoleoPre">Mapa del precio del Gasóleo Premium</h3>
     <div class="mapas">
         {% include figuras/MAPAS/CCAA-PrecioGasoleoPremium.html %}
         {% include figuras/MAPAS/PROVINCIA-PrecioGasoleoPremium.html %}
     </div>
 
+    <h3 id="mapaGasololina95E5">Mapa del precio de la Gasolina 95 E5</h3>
     <div class="mapas">
         {% include figuras/MAPAS/CCAA-PrecioGasolina95E5.html %}
         {% include figuras/MAPAS/PROVINCIA-PrecioGasolina95E5.html %}
     </div>
 
+    <h3 id="mapaGasololina95E5Pre">Mapa del precio de la Gasolina 95 E5 Premium</h3>
     <div class="mapas">
         {% include figuras/MAPAS/CCAA-PrecioGasolina95E5Premium.html %}
         {% include figuras/MAPAS/PROVINCIA-PrecioGasolina95E5Premium.html %}
     </div>
 
+    <h3 id="mapaGasololina95E10">Mapa del precio de la Gasolina 95 E10</h3>
     <div class="mapas">
         {% include figuras/MAPAS/CCAA-PrecioGasolina95E10.html %}
         {% include figuras/MAPAS/PROVINCIA-PrecioGasolina95E10.html %}
     </div>
 
+    <h3 id="mapaGasololina98E5">Mapa del precio de la Gasolina 98 E5</h3>
     <div class="mapas">
         {% include figuras/MAPAS/CCAA-PrecioGasolina98E5.html %}
         {% include figuras/MAPAS/PROVINCIA-PrecioGasolina98E5.html %}
     </div>
 
+    <h3 id="mapaGasololina98E10">Mapa del precio de la Gasolina 98 E10</h3>
     <div class="mapas">
         {% include figuras/MAPAS/CCAA-PrecioGasolina98E10.html %}
         {% include figuras/MAPAS/PROVINCIA-PrecioGasolina98E10.html %}

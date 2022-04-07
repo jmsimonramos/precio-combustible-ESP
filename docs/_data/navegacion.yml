@@ -8,6 +8,7 @@ menu:
     hijos: 
   
   - titulo: Comunidades Autónomas
+    enlace: CCAA
     hijos: 
       - titulo: Comunidades Autónomas
         enlace: CCAA

@@ -1,5 +1,3 @@
-from turtle import width
-from unittest import expectedFailure
 import pandas as pd
 import os, sys
 from src.Utils import Utils
@@ -100,10 +98,10 @@ class Visualizacion():
                 color=combustible,
                 center={"lat": 40.4165, "lon": -3.70256},
                 mapbox_style="open-street-map",
-                zoom=4,
+                zoom=self.__config["VISUALIZACION"]["ZOOM"],
                 color_continuous_scale= self.__config["VISUALIZACION"]["PALETA"],
                 title = f"Mapa de Comunidades Autónomas con la media del<br> {combustible} de hoy ({self.__config['META']['ULTIMO_DIA']})",
-                width = 550
+                width = self.__config["VISUALIZACION"]["ANCHO"]
             )
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}CCAA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
@@ -116,10 +114,10 @@ class Visualizacion():
                 color=combustible,
                 center={"lat": 40.4165, "lon": -3.70256},
                 mapbox_style="open-street-map",
-                zoom=4,
+                zoom=self.__config["VISUALIZACION"]["ZOOM"],
                 color_continuous_scale= self.__config["VISUALIZACION"]["PALETA"],
                 title = f"Mapa de Provincias con la media del<br> {combustible} de hoy ({self.__config['META']['ULTIMO_DIA']})",
-                width = 550
+                width = self.__config["VISUALIZACION"]["ANCHO"]
             )
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}PROVINCIA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
