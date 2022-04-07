@@ -1,6 +1,6 @@
 menu:
   - titulo: Inicio
-    enlace: /
+    enlace: https://jmsimonramos.github.io/precio-combustible-ESP/
     hijos: 
   
   - titulo: Mapas

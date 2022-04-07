@@ -1,6 +1,6 @@
 {% assign elementos = site.data.navegacion.menu %}
 <div class="navbar">
-    <a href="/"><i class="fa-solid fa-gas-pump"></i></a>
+    <a href="{{site.baseurl}}"><i class="fa-solid fa-gas-pump"></i></a>
     {% for elemento in elementos %}
         {% if elemento.hijos %}
             <div class="subnav">

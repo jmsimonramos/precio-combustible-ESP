@@ -5,7 +5,9 @@
 4. [📚 Conjuntos de Datos](#Conjuntos_De_Datos)
 5. [⛽️ Dataset Estaciones de Servicio](#Dataset_Estaciones_De_Servicio)
 6. [💶 Dataset Precio Combustible Mensual](#Dataset_Precio_Combustible_Mensual)
-7. [⚙️ Pruebas de Ejecución](#Pruebas_De_Ejecución)
+7. [🗺 Dataset precio combustible mensual (por Comunidades Autónomas)](#Dataset_Precio_Combustible_MensualCCAA)
+8. [📍 Dataset precio combustible mensual (por Provincias)](#Dataset_Precio_Combustible_MensualProvincia)
+9. [⚙️ Pruebas de Ejecución](#Pruebas_De_Ejecución)
 
 # 📊 Dashboard Interactivo <a name="Dashboard"></a>
 <a href="https://jmsimonramos.github.io/precio-combustible-ESP/" target="_blank">Visualización de los datos de forma interactiva</a>
@@ -65,6 +67,55 @@ El conjunto de datos *precioEESS-{mes}-{año}.csv* se encuentra formado por los 
 |------------------------------------|----------------------------------------------------------------------|----------|
 | Fecha                              | Fecha a la que pertenecen los precios                                | Str      |
 | IDEESS                             | Identificador de la Estación de Servicio                             | Str      |
+| Precio Biodiesel                   | Precio del Biodiesel en la Estación de Servicio                      | Float    |
+| Precio Bioetanol                   | Precio del Bioetanol en la Estación de Servicio                      | Float    |
+| Precio Gas Natural Comprimido      | Precio del Gas Natural Comprimido en la Estación de Servicio         | Float    |
+| Precio Gas Natural Licuado         | Precio del Gas Natural Licuado en la Estación de Servicio            | Float    |
+| Precio gases licuados del petroleo | Precio de los gases licuados del petroleo en la Estación de Servicio | Float    |
+| Precio Gasoleo A                   | Precio del Gasóleo A en la Estación de Servicio                      | Float    |
+| Precio Gasoleo B                   | Precio del Gasóleo B en la Estación de Servicio                      | Float    |
+| Precio Gasoleo Premium             | Precio del Gasóleo Premium en la Estación de Servicio                | Float    |
+| Precio Gasolina 95 E10             | Precio de la Gasolina 95 E10 en la Estación de Servicio              | Float    |
+| Precio Gasolina 95 E5              | Precio de la Gasolina 95 E5 en la Estación de Servicio               | Float    |
+| Precio Gasolina 95 E5 Premium      | Precio de la Gasolina 95 E5 Premium en la Estación de Servicio       | Float    |
+| Precio Gasolina 98 E10             | Precio de la Gasolina 98 E10 en la Estación de Servicio              | Float    |
+| Precio Gasolina 98 E5              | Precio de la Gasolina 98 E5 en la Estación de Servicio               | Float    |
+| % BioEtanol                        | Porcentaje de BioEtanol                                              | Float    |
+| % Éster metílico                   | Porcentaje de éster metílico                                         | Float    |
+
+
+## 🗺 Dataset precio combustible mensual (por Comunidades Autónomas) <a name="Dataset_Precio_Combustible_MensualCCAA"></a>
+
+El conjunto de datos *precioCCAA-{mes}-{año}.csv* se encuentra formado por los siguientes atributos:
+
+| **Atributo**                       | **Descripcion**                                                      | **Tipo** |
+|------------------------------------|----------------------------------------------------------------------|----------|
+| Fecha                              | Fecha a la que pertenecen los precios                                | Str      |
+| CCAA                             | Nombre de la Comunidad Autónoma                             | Str      |
+| Precio Biodiesel                   | Precio del Biodiesel en la Estación de Servicio                      | Float    |
+| Precio Bioetanol                   | Precio del Bioetanol en la Estación de Servicio                      | Float    |
+| Precio Gas Natural Comprimido      | Precio del Gas Natural Comprimido en la Estación de Servicio         | Float    |
+| Precio Gas Natural Licuado         | Precio del Gas Natural Licuado en la Estación de Servicio            | Float    |
+| Precio gases licuados del petroleo | Precio de los gases licuados del petroleo en la Estación de Servicio | Float    |
+| Precio Gasoleo A                   | Precio del Gasóleo A en la Estación de Servicio                      | Float    |
+| Precio Gasoleo B                   | Precio del Gasóleo B en la Estación de Servicio                      | Float    |
+| Precio Gasoleo Premium             | Precio del Gasóleo Premium en la Estación de Servicio                | Float    |
+| Precio Gasolina 95 E10             | Precio de la Gasolina 95 E10 en la Estación de Servicio              | Float    |
+| Precio Gasolina 95 E5              | Precio de la Gasolina 95 E5 en la Estación de Servicio               | Float    |
+| Precio Gasolina 95 E5 Premium      | Precio de la Gasolina 95 E5 Premium en la Estación de Servicio       | Float    |
+| Precio Gasolina 98 E10             | Precio de la Gasolina 98 E10 en la Estación de Servicio              | Float    |
+| Precio Gasolina 98 E5              | Precio de la Gasolina 98 E5 en la Estación de Servicio               | Float    |
+| % BioEtanol                        | Porcentaje de BioEtanol                                              | Float    |
+| % Éster metílico                   | Porcentaje de éster metílico                                         | Float    |
+
+## 📍 Dataset precio combustible mensual (por Provincias) <a name="Dataset_Precio_Combustible_MensualProvincia"></a>
+
+El conjunto de datos *precioPROVINCIA-{mes}-{año}.csv* se encuentra formado por los siguientes atributos:
+
+| **Atributo**                       | **Descripcion**                                                      | **Tipo** |
+|------------------------------------|----------------------------------------------------------------------|----------|
+| Fecha                              | Fecha a la que pertenecen los precios                                | Str      |
+| Provincia                             | Nombre de la Comunidad Provincia                             | Str      |
 | Precio Biodiesel                   | Precio del Biodiesel en la Estación de Servicio                      | Float    |
 | Precio Bioetanol                   | Precio del Bioetanol en la Estación de Servicio                      | Float    |
 | Precio Gas Natural Comprimido      | Precio del Gas Natural Comprimido en la Estación de Servicio         | Float    |
