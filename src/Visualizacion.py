@@ -152,17 +152,6 @@ class Visualizacion():
         datosSemanaPasada = self.__calcularPreciosSemanaPasada()
         fig = go.Figure(data=[
             go.Bar(
-                name = f"Hoy {datosHoy.head(1)['Fecha'].values[0]}",
-                x = datosHoy.head(1).columns[1:].values,
-                y = datosHoy.head(1).iloc[:, 1:].values[0],
-                text = datosHoy.head(1).iloc[:, 1:].values[0],
-                textposition = 'auto',
-                hovertemplate="<br>".join([
-                    "Combustible: %{x}",
-                    "Precio (€): %{y}",
-                ])
-            ),
-            go.Bar(
                 name = f"Semana Pasada {datosSemanaPasada.head(1)['Fecha'].values[0]}",
                 x = datosSemanaPasada.head(1).columns[1:].values,
                 y = datosSemanaPasada.head(1).iloc[:, 1:].values[0],
@@ -172,8 +161,18 @@ class Visualizacion():
                     "Combustible: %{x}",
                     "Precio (€): %{y}",
                 ])
+            ),
+            go.Bar(
+                name = f"Hoy {datosHoy.head(1)['Fecha'].values[0]}",
+                x = datosHoy.head(1).columns[1:].values,
+                y = datosHoy.head(1).iloc[:, 1:].values[0],
+                text = datosHoy.head(1).iloc[:, 1:].values[0],
+                textposition = 'auto',
+                hovertemplate="<br>".join([
+                    "Combustible: %{x}",
+                    "Precio (€): %{y}",
+                ])
             )
-
         ])
         fig.update_layout(
             title="Comparativa precios combustible entre el día actual y la semana pasada",
