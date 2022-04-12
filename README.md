@@ -149,9 +149,9 @@ El repositorio se encuentra estructurado de la siguiente forma:
 
 ````
 .
-├── app/ # Dashboard con la visualización de los precios
 ├── assets/ # Imágenes del README
 ├── data/ # Datos para generar las visualizaciones
+├── docs/ # Dashboard con la visualización de los precios
 ├── notebooks/ # Ficheros .ipynb adicionales
 ├── src/ # Ficheros .py con el código para obtener los datos, procesarlos y generar las visualizaciones
 ├── config.json # Fichero con la configuración de los parámetros del script de obtención de los precios y la visualización
