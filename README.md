@@ -7,7 +7,8 @@
 6. [💶 Dataset Precio Combustible Mensual](#Dataset_Precio_Combustible_Mensual)
 7. [🗺 Dataset precio combustible mensual (por Comunidades Autónomas)](#Dataset_Precio_Combustible_MensualCCAA)
 8. [📍 Dataset precio combustible mensual (por Provincias)](#Dataset_Precio_Combustible_MensualProvincia)
-9. [⚙️ Pruebas de Ejecución](#Pruebas_De_Ejecución)
+9. [🛠 Pruebas de Ejecución](#Pruebas_De_Ejecución)
+10. [⚙️ Estructura del Repositorio](#Estructura)
 
 # 📊 Dashboard Interactivo <a name="Dashboard"></a>
 <a href="https://jmsimonramos.github.io/precio-combustible-ESP/" target="_blank">Visualización de los datos de forma interactiva</a>
@@ -132,7 +133,7 @@ El conjunto de datos *precioPROVINCIA-{mes}-{año}.csv* se encuentra formado por
 | % BioEtanol                        | Porcentaje de BioEtanol                                              | Float    |
 | % Éster metílico                   | Porcentaje de éster metílico                                         | Float    |
 
-# ⚙️ Pruebas de Ejecución <a name="Pruebas_De_Ejecución"></a>
+# 🛠 Pruebas de Ejecución <a name="Pruebas_De_Ejecución"></a>
 
 Para ejecutar el script hay que ejecutar el comando `python obtenerPrecioCombustible.py` desde la raíz del proyecto.
 
@@ -141,3 +142,20 @@ Para ejecutar el script hay que ejecutar el comando `python obtenerPrecioCombust
 
 ![Prueba de Ejecución cuando ya existen datos](assets/demoExistenDatos.gif)
 **Video 2: Ejecución del script cuando ya se disponen de los datos del día.**
+
+# ⚙️ Estructura del Repositorio <a name="Estructura"></a>
+
+El repositorio se encuentra estructurado de la siguiente forma:
+
+````
+.
+├── app/ # Dashboard con la visualización de los precios
+├── assets/ # Imágenes del README
+├── data/ # Datos para generar las visualizaciones
+├── notebooks/ # Ficheros .ipynb adicionales
+├── src/ # Ficheros .py con el código para obtener los datos, procesarlos y generar las visualizaciones
+├── config.json # Fichero con la configuración de los parámetros del script de obtención de los precios y la visualización
+├── obtenerPrecioCombustible.py # Script de obtención de precios y generación de gráficas
+├── README.md
+└── requirements.txt # Dependencias python para ejecutar la herramienta
+````
