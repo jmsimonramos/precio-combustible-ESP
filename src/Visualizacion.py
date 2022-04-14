@@ -146,6 +146,8 @@ class Visualizacion():
             yaxis_title="Precio (€)",
             legend_title="Combustible",
         )
+        fig.update_xaxes(visible=True, showticklabels=False)
+
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}evolucionPrecio.html", include_plotlyjs=False, full_html=False)
 
         datosHoy = self.__dfHistorico[self.__dfHistorico["Fecha"] == self.__config["META"]["ULTIMO_DIA"]][self.__dfHistorico.columns[:-2]]
@@ -186,7 +188,8 @@ class Visualizacion():
     def __generarGraficosCCAA(self):
         for combustible in self.__dfCCAA.columns[2:-2]:
             fig = px.line(self.__dfCCAA, x='Fecha', y=combustible, color='CCAA', markers=True, title=f"Evolución del precio del {combustible.replace('Precio ', '')} por Comunidad Autónoma")
-            
+            fig.update_xaxes(visible=True, showticklabels=False)
+
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_CCAA']}evolucion{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
         # COMPARATIVA CCAA
@@ -218,7 +221,8 @@ class Visualizacion():
     def __generarGraficosProvincias(self):
         for combustible in self.__dfProvincia.columns[2:-2]:
             fig = px.line(self.__dfProvincia, x='Fecha', y=combustible, color='Provincia', markers=True, title=f"Evolución del precio del {combustible.replace('Precio ', '')} por Provincias")
-            
+            fig.update_xaxes(visible=True, showticklabels=False)
+        
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_PROVINCIA']}evolucion{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
         
         # COMPARATIVA PROVINCIAS
