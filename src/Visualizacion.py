@@ -18,6 +18,7 @@ class Visualizacion():
         self.__dfHistorico = pd.DataFrame()
         self.__mapaCCAA = pd.DataFrame()
         self.__mapaProvincia = pd.DataFrame()
+        self.__fechas = []
 
         # Configuramos el log con la ruta del fichero, el modo de uso (a = añadir al final del fichero), el formato del mensaje (tiempo - tipoError - mensaje) y la prioridad mínima(DEBUG = más baja, por lo que cualquier aviso se registrará en el log)
         log.basicConfig(filename=self.__config["META"]["LOG_PATH"], filemode="a", format='%(asctime)s - %(levelname)s - %(message)s', datefmt=self.__config["META"]["FORMATO_FECHA_LOG"], level=log.DEBUG)
@@ -69,8 +70,11 @@ class Visualizacion():
             self.__dfCCAA = pd.concat([self.__dfCCAA, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
 
         self.__dfHistorico = self.__dfCCAA.groupby(["Fecha"], as_index=False).mean().round(3) # Utilizamos el dataset de las CCAA para obtener el valor medio del combustible a nivel nacional
+        
+        # Obtenemos el lsitado de las fechas para las que disponemos de datos y lo pasamos a formato lista eliminando los valores intermedios para tener únicamente la primera fecha disponible y la última. Esto nos servirá posteriormente para mejorar los datos en las visualizaciones
+        self.__fechas = self.__dfCCAA.Fecha.unique()
+        self.__fechas[1:-1] = ["" for _ in self.__fechas[1:-1]]
 
-    
     def __cargarDatosProvincia(self):
         # Obtenemos todos los ficheros de todos los meses disponibles para las Provincias
         lista_precios_provincia = sorted([file for file in os.listdir(self.__config["VISUALIZACION"]["RUTA_PROVINCIA"])])
@@ -145,8 +149,13 @@ class Visualizacion():
             xaxis_title="Fecha",
             yaxis_title="Precio (€)",
             legend_title="Combustible",
+            # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
+            xaxis = dict(
+                tickmode = "array",
+                tickvals = self.__fechas,
+                ticktext = self.__fechas
+            )
         )
-        fig.update_xaxes(visible=True, showticklabels=False)
 
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}evolucionPrecio.html", include_plotlyjs=False, full_html=False)
 
@@ -188,7 +197,15 @@ class Visualizacion():
     def __generarGraficosCCAA(self):
         for combustible in self.__dfCCAA.columns[2:-2]:
             fig = px.line(self.__dfCCAA, x='Fecha', y=combustible, color='CCAA', markers=True, title=f"Evolución del precio del {combustible.replace('Precio ', '')} por Comunidad Autónoma")
-            fig.update_xaxes(visible=True, showticklabels=False)
+            
+            # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
+            fig.update_layout(
+                xaxis = dict(
+                    tickmode = "array",
+                    tickvals = self.__fechas,
+                    ticktext = self.__fechas
+                )
+            )
 
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_CCAA']}evolucion{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
@@ -215,13 +232,26 @@ class Visualizacion():
             xaxis_title="Fecha",
             yaxis_title="Precio (€)",
             legend_title="Combustible + CCAA",
+            # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
+            xaxis = dict(
+                tickmode = "array",
+                tickvals = self.__fechas,
+                ticktext = self.__fechas
+            )
         )
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_CCAA']}comparativaPrecios.html", include_plotlyjs=False, full_html=False)
     
     def __generarGraficosProvincias(self):
         for combustible in self.__dfProvincia.columns[2:-2]:
             fig = px.line(self.__dfProvincia, x='Fecha', y=combustible, color='Provincia', markers=True, title=f"Evolución del precio del {combustible.replace('Precio ', '')} por Provincias")
-            fig.update_xaxes(visible=True, showticklabels=False)
+            # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
+            fig.update_layout(
+                xaxis = dict(
+                    tickmode = "array",
+                    tickvals = self.__fechas,
+                    ticktext = self.__fechas
+                )
+            )
         
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_PROVINCIA']}evolucion{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
         
@@ -247,5 +277,11 @@ class Visualizacion():
             xaxis_title="Fecha",
             yaxis_title="Precio (€)",
             legend_title="Combustible + Provincia",
+            # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
+            xaxis = dict(
+                tickmode = "array",
+                tickvals = self.__fechas,
+                ticktext = self.__fechas
+            )
         )
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_PROVINCIA']}comparativaPrecios.html", include_plotlyjs=False, full_html=False)
