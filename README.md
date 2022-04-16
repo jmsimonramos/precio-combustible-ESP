@@ -137,7 +137,7 @@ El conjunto de datos *precioPROVINCIA-{mes}-{año}.csv* se encuentra formado por
 
 Para ejecutar el script hay que ejecutar el comando `python obtenerPrecioCombustible.py` desde la raíz del proyecto.
 
-![Prueba de Ejecución Correcta](assets/demo.gif)
+![Prueba de Ejecución Correcta](assets/demoPrincipal.gif)
 **Video 1: Ejecución correcta del script.**
 
 ![Prueba de Ejecución cuando ya existen datos](assets/demoExistenDatos.gif)
