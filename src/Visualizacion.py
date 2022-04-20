@@ -139,6 +139,7 @@ class Visualizacion():
                 x = self.__dfHistorico["Fecha"],
                 y = self.__dfHistorico[combustible],
                 name = f"{combustible}",
+                mode = "lines+markers",
                 hovertemplate="<br>".join([
                 "Fecha: %{x}",
                 "Precio (€): %{y}",
@@ -220,6 +221,7 @@ class Visualizacion():
                         y = datos[combustible],
                         name = f"{combustible}-{ccaa}",
                         visible = "legendonly",
+                        mode = "lines+markers",
                         hovertemplate="<br>".join([
                         "Fecha: %{x}",
                         "Precio (€): %{y}",
@@ -266,6 +268,7 @@ class Visualizacion():
                         y = datos[combustible],
                         name = f"{combustible}-{provincia}",
                         visible = "legendonly",
+                        mode = "lines+markers",
                         hovertemplate="<br>".join([
                         "Fecha: %{x}",
                         "Precio (€): %{y}",
