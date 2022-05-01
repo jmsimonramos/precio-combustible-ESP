@@ -70,6 +70,11 @@ class Visualizacion():
             self.__dfCCAA = pd.concat([self.__dfCCAA, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
 
         self.__dfHistorico = self.__dfCCAA.groupby(["Fecha"], as_index=False).mean().round(3) # Utilizamos el dataset de las CCAA para obtener el valor medio del combustible a nivel nacional
+
+        # Al ser un dataframe generado mediante agrupación, ordenamos por fecha ya que de lo contrario aparecerían los registros desordenados
+        self.__dfHistorico["Fecha"] = pd.to_datetime(self.__dfHistorico["Fecha"], format="%d-%m-%Y")
+        self.__dfHistorico.sort_values(by="Fecha", ascending=True, inplace=True)
+        self.__dfHistorico["Fecha"] = self.__dfHistorico["Fecha"].dt.strftime('%d-%m-%Y')
         
         # Obtenemos el lsitado de las fechas para las que disponemos de datos y lo pasamos a formato lista eliminando los valores intermedios para tener únicamente la primera fecha disponible y la última. Esto nos servirá posteriormente para mejorar los datos en las visualizaciones
         self.__fechas = self.__dfCCAA.Fecha.unique()
@@ -124,13 +129,13 @@ class Visualizacion():
             )
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}PROVINCIA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
-    def __calcularPreciosSemanaPasada(self):
+    def __calcularPreciosAnteriores(self, num_dias):
         hoy = datetime.datetime.strptime(self.__config["META"]["ULTIMO_DIA"], '%d-%m-%Y').date()
 
-        semanaPasada = hoy - datetime.timedelta(days = 7)
-        semanaPasada = semanaPasada.strftime('%d-%m-%Y')
+        fechaAnterior = hoy - datetime.timedelta(days = num_dias)
+        fechaAnterior = fechaAnterior.strftime('%d-%m-%Y')
 
-        return self.__dfHistorico[self.__dfHistorico["Fecha"] == semanaPasada][self.__dfHistorico.columns[:-2]]
+        return self.__dfHistorico[self.__dfHistorico["Fecha"] == fechaAnterior][self.__dfHistorico.columns[:-2]]
 
     def __generarGraficosGenerales(self):
         fig = go.Figure()
@@ -161,7 +166,9 @@ class Visualizacion():
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}evolucionPrecio.html", include_plotlyjs=False, full_html=False)
 
         datosHoy = self.__dfHistorico[self.__dfHistorico["Fecha"] == self.__config["META"]["ULTIMO_DIA"]][self.__dfHistorico.columns[:-2]]
-        datosSemanaPasada = self.__calcularPreciosSemanaPasada()
+        datosSemanaPasada = self.__calcularPreciosAnteriores(num_dias = 7)
+        datosMesPasado = self.__calcularPreciosAnteriores(num_dias = 30)
+
         fig = go.Figure(data=[
             go.Bar(
                 name = f"Semana Pasada {datosSemanaPasada.head(1)['Fecha'].values[0]}",
@@ -193,7 +200,40 @@ class Visualizacion():
             legend_title="Día",
             barmode='group',
         )
-        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecio.html", include_plotlyjs=False, full_html=False)
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecioSemanaPasada.html", include_plotlyjs=False, full_html=False)
+
+        fig = go.Figure(data=[
+            go.Bar(
+                name = f"Mes Pasado {datosMesPasado.head(1)['Fecha'].values[0]}",
+                x = datosMesPasado.head(1).columns[1:].values,
+                y = datosMesPasado.head(1).iloc[:, 1:].values[0],
+                text = datosMesPasado.head(1).iloc[:, 1:].values[0],
+                textposition = 'auto',
+                hovertemplate="<br>".join([
+                    "Combustible: %{x}",
+                    "Precio (€): %{y}",
+                ])
+            ),
+            go.Bar(
+                name = f"Hoy {datosHoy.head(1)['Fecha'].values[0]}",
+                x = datosHoy.head(1).columns[1:].values,
+                y = datosHoy.head(1).iloc[:, 1:].values[0],
+                text = datosHoy.head(1).iloc[:, 1:].values[0],
+                textposition = 'auto',
+                hovertemplate="<br>".join([
+                    "Combustible: %{x}",
+                    "Precio (€): %{y}",
+                ])
+            )
+        ])
+        fig.update_layout(
+            title="Comparativa precios combustible entre el día actual y el mes pasado",
+            xaxis_title="Tipo de Combustible",
+            yaxis_title="Precio (€)",
+            legend_title="Día",
+            barmode='group',
+        )
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecioMesPasado.html", include_plotlyjs=False, full_html=False)
         
     def __generarGraficosCCAA(self):
         for combustible in self.__dfCCAA.columns[2:-2]:
