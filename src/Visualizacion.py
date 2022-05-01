@@ -9,6 +9,7 @@ import plotly as plo
 import unidecode
 import geopandas as gpd
 import datetime
+from dateutil import relativedelta
 
 class Visualizacion():
     def __init__(self):
@@ -129,12 +130,15 @@ class Visualizacion():
             )
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}PROVINCIA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
-    def __calcularPreciosAnteriores(self, num_dias):
+    def __calcularPreciosAnteriores(self, num_dias = 0, mesAnterior = False):
         hoy = datetime.datetime.strptime(self.__config["META"]["ULTIMO_DIA"], '%d-%m-%Y').date()
-
-        fechaAnterior = hoy - datetime.timedelta(days = num_dias)
+        if mesAnterior:
+            # Obtenemos el mismo día que el que estamos comparando pero para el mes anterior
+            fechaAnterior = hoy - relativedelta.relativedelta(months = 1)
+        else:
+            fechaAnterior = hoy - datetime.timedelta(days = num_dias)
+        
         fechaAnterior = fechaAnterior.strftime('%d-%m-%Y')
-
         return self.__dfHistorico[self.__dfHistorico["Fecha"] == fechaAnterior][self.__dfHistorico.columns[:-2]]
 
     def __generarGraficosGenerales(self):
@@ -167,7 +171,7 @@ class Visualizacion():
 
         datosHoy = self.__dfHistorico[self.__dfHistorico["Fecha"] == self.__config["META"]["ULTIMO_DIA"]][self.__dfHistorico.columns[:-2]]
         datosSemanaPasada = self.__calcularPreciosAnteriores(num_dias = 7)
-        datosMesPasado = self.__calcularPreciosAnteriores(num_dias = 30)
+        datosMesPasado = self.__calcularPreciosAnteriores(mesAnterior = True)
 
         fig = go.Figure(data=[
             go.Bar(
