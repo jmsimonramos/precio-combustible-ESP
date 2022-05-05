@@ -5,6 +5,8 @@ from src.IO import IO
 from git import Repo
 from os.path import exists
 import sys
+import time
+from prettytable import PrettyTable
 import logging as log
 
 class Utils():
@@ -23,6 +25,7 @@ class Utils():
     def commitActualizacionesPrecios(self):
         with yaspin(text="Actualizando repositorio local y remoto con los nuevos cambios") as spinner:
             try:
+                tiempo_inicial = self.obtenerTiempo()
                 repo = Repo(".") # Sitúo el repositorio de git desde donde lanzo el script del proyecto
 
                 # Añado todos los cambios al staging area y hago un commit con los nuevos datos
@@ -31,6 +34,10 @@ class Utils():
                 # Hacemos push al repositorio remoto
                 origin = repo.remote(name=self.config["META"]["REMOTO"])
                 origin.push()
+
+                self.config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Push Repo"] = round(self.obtenerTiempo() - tiempo_inicial, 3)
+                IO().guardarConfiguracion(self.config)
+                
                 spinner.ok(self.config["META"]["ICONO_OK"])
             except Exception as e:
                 spinner.fail(self.config["META"]["ICONO_ERROR"])
@@ -53,3 +60,25 @@ class Utils():
 
     def guardarFigura(self, fig, titulo):
         fig.get_figure().savefig(titulo, bbox_inches='tight')
+    
+    def obtenerTiempo(self):
+        return time.time()
+    
+    def generarTablaTiemposEjecucion(self):
+        tabla_tiempos = PrettyTable()
+        tabla_tiempos.field_names = ["Etapa", "Tiempo (seg)"]
+        tiempo_total = 0.0
+        
+        for etapa, tiempo in self.config["RENDIMIENTO"]["TIEMPO_EJECUCION"].items():
+            tabla_tiempos.add_row([etapa, tiempo])
+            tiempo_total += tiempo
+        
+        tabla_tiempos.add_row(["Total", tiempo_total])
+
+        return tabla_tiempos
+    
+    def mostrarTablaTiemposEjecucion(self):
+        print("TIEMPO DE EJECUCIÓN POR ETAPAS:")
+        print("===================================\n")
+
+        print(self.generarTablaTiemposEjecucion())

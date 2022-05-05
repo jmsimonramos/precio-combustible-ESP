@@ -1,6 +1,5 @@
 import pandas as pd
 import os, sys
-from src.IO import IO
 from yaspin import yaspin
 import logging as log
 import plotly.express as px
@@ -10,10 +9,13 @@ import unidecode
 import geopandas as gpd
 import datetime
 from dateutil import relativedelta
+from src.IO import IO
+from src.Utils import Utils
 
 class Visualizacion():
     def __init__(self):
-        self.__config = IO().cargarConfiguracion()
+        self.__Utils, self.__IO = Utils(), IO()
+        self.__config = self.__IO.cargarConfiguracion()
         self.__dfCCAA = pd.DataFrame()
         self.__dfProvincia = pd.DataFrame()
         self.__dfHistorico = pd.DataFrame()
@@ -28,9 +30,18 @@ class Visualizacion():
     def generarVisualizaciones(self):
         with yaspin(text="Cargando datos para la visualización") as spinner:
             try:
+                tiempo_inicial = self.__Utils.obtenerTiempo()
                 self.__cargarDatosCCAA() # Cargamos los datos de los precios por CCAA
+                self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos CCAA"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
+                tiempo_inicial = self.__Utils.obtenerTiempo()
                 self.__cargarDatosProvincia() # Cargamos los datos de los precios por Provincias
+                self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos Provincias"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
+                tiempo_inicial = self.__Utils.obtenerTiempo()
                 self.__cargarDatosMapa() # Cargamos los datos del mapa
+                self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos mapa"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
                 spinner.ok(self.__config["META"]["ICONO_OK"])
             except Exception as e:
                 print(e)
@@ -47,6 +58,7 @@ class Visualizacion():
                 spinner.fail(self.__config["META"]["ICONO_ERROR"])
                 log.error(f"Error inesperado. {e}")
                 sys.exit(0)
+        self.__IO.guardarConfiguracion(self.__config)
     
     def __cargarDatosMapa(self):
         self.__mapaCCAA = self.__dfCCAA.groupby(["Fecha", "CCAA"], as_index=False).mean().round(3)
@@ -92,10 +104,21 @@ class Visualizacion():
         
     def __generarGraficos(self):
         # Generamos gráficos de líneas de forma dinámica para cada combustible fijado en la configuración
+        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__generarGraficosGenerales()
+        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Generando gráficos generales"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
+        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__generarGraficosMapa()
+        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Generando gráficos de mapa"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
+        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__generarGraficosCCAA()
+        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Generando gráficos de CCAA"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
+        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__generarGraficosProvincias()
+        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Generando gráficos de Provincias"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
 
     def __generarGraficosMapa(self):
         # CCAA

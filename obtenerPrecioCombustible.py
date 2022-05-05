@@ -12,3 +12,6 @@ if __name__ == "__main__":
     
     # Hacemos un commit con los cambios y los subimos al repositorio remoto
     Utils().commitActualizacionesPrecios()
+
+    # Mostramos la tabla con los tiempos de ejecución
+    Utils().mostrarTablaTiemposEjecucion()

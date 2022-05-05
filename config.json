@@ -11,6 +11,9 @@
         "ICONO_OK": "\u2705",
         "ICONO_ERROR": "\u274c"
     },
+    "RENDIMIENTO": {
+        "TIEMPO_EJECUCION": {}
+    },
     "URL": {
         "API_URL": "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/",
         "MAIN_URL": "https://datos.gob.es/es/catalogo/e05068001-precio-de-carburantes-en-las-gasolineras-espanolas"

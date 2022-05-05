@@ -18,12 +18,27 @@ class ObtenerPrecio():
         log.basicConfig(filename=self.__config["META"]["LOG_PATH"], filemode="a", format='%(asctime)s - %(levelname)s - %(message)s', datefmt=self.__config["META"]["FORMATO_FECHA_LOG"], level=log.DEBUG)
 
     def obtenerPrecioCombustible(self):
+        # Calculamos el tiempo que tarda el proceso de "obtener los datos del precio"
+        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__obtenerDatosPrecio() # Obtenemos los datos de la web del gobierno
+        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Obtención de datos"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
+        # Calculamos el tiempo que tarda el proceso de "procesar los datos"
+        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__procesarDatosPrecio() # Procesamos los datos
+        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Procesar datos combustible"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
         with yaspin(text="Calculando precios medios por CCAA y provincias") as spinner:
             try: # Calculamos el precio por Provincia y CCAA
+                # Calculamos el tiempo que tarda el proceso de "calcular precios por CCAA y provincias"
+                tiempo_inicial = self.__Utils.obtenerTiempo()
                 self.__calcularPrecioCCAA()
+                self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Calcular precio CCAA"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
+                tiempo_inicial = self.__Utils.obtenerTiempo()
                 self.__calcularPrecioProvincias()
+                self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Calcular precio Provincias"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+                
                 spinner.ok(self.__config["META"]["ICONO_OK"])
             except Exception as e:
                 spinner.fail(self.__config["META"]["ICONO_ERROR"])
@@ -32,15 +47,20 @@ class ObtenerPrecio():
         # Comprobamos si existe el fichero de datos para los precios de ese mes para guardar los nuevos datos con cabecera o sin ella
         with yaspin(text="Guardando los datos en el .csv") as spinner:
             try:
+                # Calculamos el tiempo que tarda el proceso de "exportar datos a csv"
+                tiempo_inicial = self.__Utils.obtenerTiempo()
                 self.__guardarDatos()
+                self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Exportar .csv"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+
                 spinner.ok(self.__config["META"]["ICONO_OK"])
             except Exception as e:
                 spinner.fail(self.__config["META"]["ICONO_ERROR"])
                 log.error(f"Error inesperado. {e}")
                 sys.exit(0)
 
-        # Actualizamos el valor de la última fecha de la que disponemos datos    
-        self.__Utils.registrarUltimaFechaDisponibleProyecto(self.__fecha) 
+        # Actualizamos el valor de la última fecha de la que disponemos datos y guardamos la configuración actualizada
+        self.__config["META"]["ULTIMO_DIA"] = self.__fecha   
+        self.__IO.guardarConfiguracion(self.__config)
     
     def __guardarDatos(self):
         if self.__Utils.existeFicheroDatos(self.__fecha):
