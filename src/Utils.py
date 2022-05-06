@@ -73,12 +73,12 @@ class Utils():
             tabla_tiempos.add_row([etapa, tiempo])
             tiempo_total += tiempo
         
-        tabla_tiempos.add_row(["Total", tiempo_total])
+        tabla_tiempos.add_row(["Total", round(tiempo_total, 3)])
 
         return tabla_tiempos
     
     def mostrarTablaTiemposEjecucion(self):
-        print("TIEMPO DE EJECUCIÓN POR ETAPAS:")
+        print("\nTIEMPO DE EJECUCIÓN POR ETAPAS:")
         print("===================================\n")
 
         print(self.generarTablaTiemposEjecucion())
