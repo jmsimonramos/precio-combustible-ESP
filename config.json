@@ -6,26 +6,26 @@
         "IMG_PATH": "data/assets/img/",
         "LOG_PATH": "app.log",
         "FORMATO_FECHA_LOG": "%d/%m/%y %H:%M:%S",
-        "ULTIMO_DIA": "10-05-2022",
+        "ULTIMO_DIA": "11-05-2022",
         "REMOTO": "origin",
         "ICONO_OK": "\u2705",
         "ICONO_ERROR": "\u274c"
     },
     "RENDIMIENTO": {
         "TIEMPO_EJECUCION": {
-            "Obtenci\u00f3n de datos": 3.044,
-            "Procesar datos combustible": 0.524,
-            "Calcular precio CCAA": 0.012,
+            "Obtenci\u00f3n de datos": 3.527,
+            "Procesar datos combustible": 0.353,
+            "Calcular precio CCAA": 0.013,
             "Calcular precio Provincias": 0.007,
-            "Exportar .csv": 0.159,
+            "Exportar .csv": 0.158,
             "Carga de datos CCAA": 0.015,
             "Carga de datos Provincias": 0.007,
-            "Carga de datos mapa": 0.422,
-            "Generando gr\u00e1ficos generales": 0.361,
-            "Generando gr\u00e1ficos de mapa": 16.709,
-            "Generando gr\u00e1ficos de CCAA": 1.401,
-            "Generando gr\u00e1ficos de Provincias": 2.768,
-            "Push Repo": 10.68
+            "Carga de datos mapa": 0.378,
+            "Generando gr\u00e1ficos generales": 0.344,
+            "Generando gr\u00e1ficos de mapa": 16.104,
+            "Generando gr\u00e1ficos de CCAA": 1.339,
+            "Generando gr\u00e1ficos de Provincias": 2.753,
+            "Push Repo": 7.239
         }
     },
     "URL": {
