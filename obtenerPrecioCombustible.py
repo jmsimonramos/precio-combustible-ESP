@@ -9,9 +9,3 @@ if __name__ == "__main__":
 
     # Generamos los gráficos
     Visualizacion().generarVisualizaciones()
-    
-    # Hacemos un commit con los cambios y los subimos al repositorio remoto
-    Utils().commitActualizacionesPrecios()
-
-    # Mostramos la tabla con los tiempos de ejecución
-    Utils().mostrarTablaTiemposEjecucion()

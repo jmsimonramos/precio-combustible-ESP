@@ -11,23 +11,6 @@
         "ICONO_OK": "\u2705",
         "ICONO_ERROR": "\u274c"
     },
-    "RENDIMIENTO": {
-        "TIEMPO_EJECUCION": {
-            "Obtenci\u00f3n de datos": 3.306,
-            "Procesar datos combustible": 0.352,
-            "Calcular precio CCAA": 0.013,
-            "Calcular precio Provincias": 0.007,
-            "Exportar .csv": 0.158,
-            "Carga de datos CCAA": 0.014,
-            "Carga de datos Provincias": 0.009,
-            "Carga de datos mapa": 0.381,
-            "Generando gr\u00e1ficos generales": 0.355,
-            "Generando gr\u00e1ficos de mapa": 16.211,
-            "Generando gr\u00e1ficos de CCAA": 1.328,
-            "Generando gr\u00e1ficos de Provincias": 2.842,
-            "Push Repo": 10.969
-        }
-    },
     "URL": {
         "API_URL": "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/",
         "MAIN_URL": "https://datos.gob.es/es/catalogo/e05068001-precio-de-carburantes-en-las-gasolineras-espanolas"

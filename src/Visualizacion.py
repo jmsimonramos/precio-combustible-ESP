@@ -1,7 +1,5 @@
 import pandas as pd
 import os, sys
-from yaspin import yaspin
-import logging as log
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly as plo
@@ -23,41 +21,32 @@ class Visualizacion():
         self.__mapaProvincia = pd.DataFrame()
         self.__fechas = []
 
-        # Configuramos el log con la ruta del fichero, el modo de uso (a = añadir al final del fichero), el formato del mensaje (tiempo - tipoError - mensaje) y la prioridad mínima(DEBUG = más baja, por lo que cualquier aviso se registrará en el log)
-        log.basicConfig(filename=self.__config["META"]["LOG_PATH"], filemode="a", format='%(asctime)s - %(levelname)s - %(message)s', datefmt=self.__config["META"]["FORMATO_FECHA_LOG"], level=log.DEBUG)
-        
-    
     def generarVisualizaciones(self):
-        with yaspin(text="Cargando datos para la visualización") as spinner:
-            try:
-                tiempo_inicial = self.__Utils.obtenerTiempo()
-                self.__cargarDatosCCAA() # Cargamos los datos de los precios por CCAA
-                self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos CCAA"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+        print("Cargando datos para la visualización")
+        try:
+            tiempo_inicial = self.__Utils.obtenerTiempo()
+            self.__cargarDatosCCAA() # Cargamos los datos de los precios por CCAA
+            self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos CCAA"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
 
-                tiempo_inicial = self.__Utils.obtenerTiempo()
-                self.__cargarDatosProvincia() # Cargamos los datos de los precios por Provincias
-                self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos Provincias"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+            tiempo_inicial = self.__Utils.obtenerTiempo()
+            self.__cargarDatosProvincia() # Cargamos los datos de los precios por Provincias
+            self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos Provincias"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
 
-                tiempo_inicial = self.__Utils.obtenerTiempo()
-                self.__cargarDatosMapa() # Cargamos los datos del mapa
-                self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos mapa"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
+            tiempo_inicial = self.__Utils.obtenerTiempo()
+            self.__cargarDatosMapa() # Cargamos los datos del mapa
+            self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos mapa"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
 
-                spinner.ok(self.__config["META"]["ICONO_OK"])
-            except Exception as e:
-                print(e)
-                spinner.fail(self.__config["META"]["ICONO_ERROR"])
-                log.error(f"Error inesperado. {e}")
-                sys.exit(0)
-        
-        with yaspin(text="Generando gráficas") as spinner:
-            try:
-                self.__generarGraficos() # Genera todos los gráficos
-                spinner.ok(self.__config["META"]["ICONO_OK"])
-            except Exception as e:
-                print(e)
-                spinner.fail(self.__config["META"]["ICONO_ERROR"])
-                log.error(f"Error inesperado. {e}")
-                sys.exit(0)
+        except Exception as e:
+            print(e)
+            sys.exit(0)
+    
+        print("Generando gráficas")
+        try:
+            self.__generarGraficos() # Genera todos los gráficos
+        except Exception as e:
+            print(e)
+            print(f"Error inesperado. {e}")
+            sys.exit(0)
         self.__IO.guardarConfiguracion(self.__config)
     
     def __cargarDatosMapa(self):
