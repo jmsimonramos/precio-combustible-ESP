@@ -1,7 +1,4 @@
 import json
-import pandas as pd
-import numpy as np
-
 class IO():
     def __init__(self):
         self.config = self.cargarConfiguracion()

@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from src.IO import IO
 from os.path import exists
-import sys
 import time
 class Utils():
     def __init__(self):
