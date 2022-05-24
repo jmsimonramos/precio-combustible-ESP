@@ -24,18 +24,9 @@ class Visualizacion():
     def generarVisualizaciones(self):
         print("Cargando datos para la visualización")
         try:
-            tiempo_inicial = self.__Utils.obtenerTiempo()
             self.__cargarDatosCCAA() # Cargamos los datos de los precios por CCAA
-            self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos CCAA"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
-
-            tiempo_inicial = self.__Utils.obtenerTiempo()
             self.__cargarDatosProvincia() # Cargamos los datos de los precios por Provincias
-            self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos Provincias"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
-
-            tiempo_inicial = self.__Utils.obtenerTiempo()
             self.__cargarDatosMapa() # Cargamos los datos del mapa
-            self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Carga de datos mapa"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
-
         except Exception as e:
             print(e)
             sys.exit(0)
@@ -93,21 +84,10 @@ class Visualizacion():
         
     def __generarGraficos(self):
         # Generamos gráficos de líneas de forma dinámica para cada combustible fijado en la configuración
-        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__generarGraficosGenerales()
-        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Generando gráficos generales"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
-
-        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__generarGraficosMapa()
-        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Generando gráficos de mapa"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
-
-        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__generarGraficosCCAA()
-        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Generando gráficos de CCAA"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
-
-        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__generarGraficosProvincias()
-        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Generando gráficos de Provincias"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
 
     def __generarGraficosMapa(self):
         # CCAA

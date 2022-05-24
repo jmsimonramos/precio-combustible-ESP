@@ -28,6 +28,3 @@ class Utils():
 
     def guardarFigura(self, fig, titulo):
         fig.get_figure().savefig(titulo, bbox_inches='tight')
-    
-    def obtenerTiempo(self):
-        return time.time()

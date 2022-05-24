@@ -13,37 +13,20 @@ class ObtenerPrecio():
         self.__preciosEESS, self.__preciosCCAA, self.__preciosProvincia = "", "", ""
 
     def obtenerPrecioCombustible(self):
-        # Calculamos el tiempo que tarda el proceso de "obtener los datos del precio"
-        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__obtenerDatosPrecio() # Obtenemos los datos de la web del gobierno
-        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Obtención de datos"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
-
-        # Calculamos el tiempo que tarda el proceso de "procesar los datos"
-        tiempo_inicial = self.__Utils.obtenerTiempo()
         self.__procesarDatosPrecio() # Procesamos los datos
-        self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Procesar datos combustible"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
 
         print("Calculando precios medios por CCAA y provincias")
         try: # Calculamos el precio por Provincia y CCAA
-            # Calculamos el tiempo que tarda el proceso de "calcular precios por CCAA y provincias"
-            tiempo_inicial = self.__Utils.obtenerTiempo()
             self.__calcularPrecioCCAA()
-            self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Calcular precio CCAA"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
-
-            tiempo_inicial = self.__Utils.obtenerTiempo()
             self.__calcularPrecioProvincias()
-            self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Calcular precio Provincias"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
-    
         except Exception as e:
             print(f"Error inesperado. {e}")
             sys.exit(0)
         # Comprobamos si existe el fichero de datos para los precios de ese mes para guardar los nuevos datos con cabecera o sin ella
         print("Guardando los datos en el .csv")
         try:
-            # Calculamos el tiempo que tarda el proceso de "exportar datos a csv"
-            tiempo_inicial = self.__Utils.obtenerTiempo()
             self.__guardarDatos()
-            self.__config["RENDIMIENTO"]["TIEMPO_EJECUCION"]["Exportar .csv"] = round(self.__Utils.obtenerTiempo() - tiempo_inicial, 3)
 
         except Exception as e:            
             print(f"Error inesperado. {e}")
