@@ -2,7 +2,7 @@ name: Workflow Obtener precio de los combustibles
 
 on:
   schedule:
-    - cron: '0 7 * * *' # Todos los días a las 7 de la mañana
+    - cron: '0 5 * * *' # Todos los días a las 7 de la mañana (CEST)
 
 jobs:
   build:
