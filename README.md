@@ -1,3 +1,7 @@
+[![Workflow Obtener precio de los combustibles](https://github.com/jmsimonramos/precio-combustible-ESP/actions/workflows/obtenerPrecioCombustible.yml/badge.svg?branch=main)](https://github.com/jmsimonramos/precio-combustible-ESP/actions/workflows/obtenerPrecioCombustible.yml)
+
+[![pages-build-deployment](https://github.com/jmsimonramos/precio-combustible-ESP/actions/workflows/pages/pages-build-deployment/badge.svg?branch=main)](https://github.com/jmsimonramos/precio-combustible-ESP/actions/workflows/pages/pages-build-deployment)
+
 ## Índice
 1. [📊 Dashboard Interactivo](#Dashboard)
 2. [📝 Introducción](#Introducción)
