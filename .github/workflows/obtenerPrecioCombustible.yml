@@ -36,7 +36,7 @@ jobs:
     - name: Commit Cambios
       env:
         EMAIL: ${{ secrets.EMAIL }}
-        NAME: ${{ secrets.NOMBRE }}
+        NOMBRE: ${{ secrets.NOMBRE }}
         FIRMA: ${{ secrets.FIRMA }}
       run: |
         git config --local user.email "$EMAIL"
