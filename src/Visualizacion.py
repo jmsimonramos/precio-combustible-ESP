@@ -84,6 +84,7 @@ class Visualizacion():
         
     def __generarGraficos(self):
         # Generamos gráficos de líneas de forma dinámica para cada combustible fijado en la configuración
+        self.__generarGraficoEvolucionPrecioNacional()
         self.__generarGraficosGenerales()
         self.__generarGraficosMapa()
         self.__generarGraficosCCAA()
@@ -122,18 +123,18 @@ class Visualizacion():
             )
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}PROVINCIA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
-    def __calcularPreciosAnteriores(self, num_dias = 0, mesAnterior = False, numMeses = 1):
+    def __calcularPreciosAnteriores(self, num_dias = 0, mesAnterior = False, num_meses = 1):
         hoy = datetime.datetime.strptime(self.__config["META"]["ULTIMO_DIA"], '%d-%m-%Y').date()
         if mesAnterior:
             # Obtenemos el mismo día que el que estamos comparando pero para el mes anterior
-            fechaAnterior = hoy - relativedelta.relativedelta(months = numMeses)
+            fechaAnterior = hoy - relativedelta.relativedelta(months = num_meses)
         else:
             fechaAnterior = hoy - datetime.timedelta(days = num_dias)
         
         fechaAnterior = fechaAnterior.strftime('%d-%m-%Y')
         return self.__dfHistorico[self.__dfHistorico["Fecha"] == fechaAnterior][self.__dfHistorico.columns[:-2]]
 
-    def __generarGraficosGenerales(self):
+    def __generarGraficoEvolucionPrecioNacional(self):
         fig = go.Figure()
         for combustible in self.__dfHistorico.columns[1:-2]:
             fig.add_trace(go.Scatter(
@@ -159,10 +160,10 @@ class Visualizacion():
 
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}evolucionPrecio.html", include_plotlyjs=False, full_html=False)
 
+    def __generarGraficosGenerales(self):
+        
         datosHoy = self.__dfHistorico[self.__dfHistorico["Fecha"] == self.__config["META"]["ULTIMO_DIA"]][self.__dfHistorico.columns[:-2]]
         datosSemanaPasada = self.__calcularPreciosAnteriores(num_dias = 7)
-        datosMesPasado = self.__calcularPreciosAnteriores(mesAnterior = True, numMeses = 1)
-        datosDosMesesPasado = self.__calcularPreciosAnteriores(mesAnterior = True, numMeses = 2)
 
         fig = go.Figure(data=[
             go.Bar(
@@ -172,10 +173,7 @@ class Visualizacion():
                 text = datosSemanaPasada.head(1).iloc[:, 1:].values[0],
                 textposition = 'auto',
                 marker_color="#646def",
-                hovertemplate="<br>".join([
-                    "Combustible: %{x}",
-                    "Precio (€): %{y}",
-                ])
+                hovertemplate="%{y}€",
             ),
             go.Bar(
                 name = f"Hoy {datosHoy.head(1)['Fecha'].values[0]}",
@@ -184,10 +182,7 @@ class Visualizacion():
                 text = datosHoy.head(1).iloc[:, 1:].values[0],
                 textposition = 'auto',
                 marker_color="#de5f46",
-                hovertemplate="<br>".join([
-                    "Combustible: %{x}",
-                    "Precio (€): %{y}",
-                ])
+                hovertemplate="%{y}€",
             )
         ])
         fig.update_layout(
@@ -195,92 +190,47 @@ class Visualizacion():
             xaxis_title="Tipo de Combustible",
             yaxis_title="Precio (€)",
             legend_title="Día",
+            hovermode="x unified",
             barmode='group',
         )
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecioSemanaPasada.html", include_plotlyjs=False, full_html=False)
 
-        fig = go.Figure(data=[
-            go.Bar(
-                name = f"Mes Pasado {datosMesPasado.head(1)['Fecha'].values[0]}",
-                x = datosMesPasado.head(1).columns[1:].values,
-                y = datosMesPasado.head(1).iloc[:, 1:].values[0],
-                text = datosMesPasado.head(1).iloc[:, 1:].values[0],
-                textposition = 'auto',
-                marker_color="#646def",
-                hovertemplate="<br>".join([
-                    "Combustible: %{x}",
-                    "Precio (€): %{y}",
-                ])
-            ),
-            go.Bar(
-                name = f"Hoy {datosHoy.head(1)['Fecha'].values[0]}",
-                x = datosHoy.head(1).columns[1:].values,
-                y = datosHoy.head(1).iloc[:, 1:].values[0],
-                text = datosHoy.head(1).iloc[:, 1:].values[0],
-                textposition = 'auto',
-                marker_color="#de5f46",
-                hovertemplate="<br>".join([
-                    "Combustible: %{x}",
-                    "Precio (€): %{y}",
-                ])
-            )
-        ])
-        fig.update_layout(
-            title="Comparativa precios combustible entre el día actual y el mes pasado",
-            xaxis_title="Tipo de Combustible",
-            yaxis_title="Precio (€)",
-            legend_title="Día",
-            barmode='group',
-        )
-        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecioMesPasado.html", include_plotlyjs=False, full_html=False)
-
-        fig = go.Figure(data=[
-            go.Bar(
-                name = f"Hace dos Meses {datosDosMesesPasado.head(1)['Fecha'].values[0]}",
-                x = datosDosMesesPasado.head(1).columns[1:].values,
-                y = datosDosMesesPasado.head(1).iloc[:, 1:].values[0],
-                text = datosDosMesesPasado.head(1).iloc[:, 1:].values[0],
-                textposition = 'auto',
-                marker_color="#5dc99a",
-                hovertemplate="<br>".join([
-                    "Combustible: %{x}",
-                    "Precio (€): %{y}",
-                ])
-            ),
-            go.Bar(
-                name = f"Mes Pasado {datosMesPasado.head(1)['Fecha'].values[0]}",
-                x = datosMesPasado.head(1).columns[1:].values,
-                y = datosMesPasado.head(1).iloc[:, 1:].values[0],
-                text = datosMesPasado.head(1).iloc[:, 1:].values[0],
-                textposition = 'auto',
-                marker_color="#646def",
-                hovertemplate="<br>".join([
-                    "Combustible: %{x}",
-                    "Precio (€): %{y}",
-                ])
-            ),
-            go.Bar(
-                name = f"Hoy {datosHoy.head(1)['Fecha'].values[0]}",
-                x = datosHoy.head(1).columns[1:].values,
-                y = datosHoy.head(1).iloc[:, 1:].values[0],
-                text = datosHoy.head(1).iloc[:, 1:].values[0],
-                textposition = 'auto',
-                marker_color="#de5f46",
-                hovertemplate="<br>".join([
-                    "Combustible: %{x}",
-                    "Precio (€): %{y}",
-                ])
-            )
-        ])
-        fig.update_layout(
-            title="Comparativa precios combustible entre el día actual y hace dos meses",
-            xaxis_title="Tipo de Combustible",
-            yaxis_title="Precio (€)",
-            legend_title="Día",
-            barmode='group',
-        )
-        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecioDosMesesPasado.html", include_plotlyjs=False, full_html=False)
+        # Calculamos los meses anteriores para los meses de los que disponemos de datos
+        mesesAnteriores = len([_ for _ in os.listdir(self.__config["VISUALIZACION"]["RUTA_CCAA"])]) - 1
         
+        fig = go.Figure()
+        for indice, mes in enumerate( range(mesesAnteriores, 0, -1) ) :
+            datosAnteriores = self.__calcularPreciosAnteriores(mesAnterior=True, num_meses=mes)
+            fig.add_trace(go.Bar(
+                name = f"Hace {mes} meses ({datosAnteriores.head(1)['Fecha'].values[0]})",
+                x = datosAnteriores.head(1).columns[1:].values,
+                y = datosAnteriores.head(1).iloc[:, 1:].values[0],
+                text = datosAnteriores.head(1).iloc[:, 1:].values[0],
+                textposition = 'auto',
+                marker_color = self.__config["VISUALIZACION"]["COLORES"][indice],
+                hovertemplate="%{y}€",
+            ))
+        
+        fig.add_trace(go.Bar(
+            name = f"Hoy ({datosHoy.head(1)['Fecha'].values[0]})",
+            x = datosHoy.head(1).columns[1:].values,
+            y = datosHoy.head(1).iloc[:, 1:].values[0],
+            text = datosHoy.head(1).iloc[:, 1:].values[0],
+            textposition = 'auto',
+            marker_color="#de5f46",
+            hovertemplate="%{y}€",
+        ))
+
+        fig.update_layout(
+            title="Comparativa precios del combustible en los últimos meses",
+            xaxis_title="Tipo de Combustible",
+            yaxis_title="Precio (€)",
+            legend_title="Meses",
+            hovermode="x unified",
+            barmode='group',
+        )
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecioMeses.html", include_plotlyjs=False, full_html=False)
+
     def __generarGraficosCCAA(self):
         # COMPARATIVA CCAA
         fig = go.Figure()
