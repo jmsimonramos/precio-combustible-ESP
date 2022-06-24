@@ -8,10 +8,12 @@ layout: default
 
     <h3>Evolución del Precio del Combustible en España.</h3>
     {% include figuras/evolucionPrecio.html %}
-    
-    <h3>Comparativa del Precio del Combustible en España en la última semana.</h3>
-    {% include figuras/comparativaPrecioSemanaPasada.html %}
 
-    <h3>Comparativa del Precio del Combustible en España en el último mes.</h3>
-    {% include figuras/comparativaPrecioMesPasado.html %}
+    <h3 id="EvolucionCCAA">Evolución del Precio de los Combustibles por Comunidades Autónomas</h3> 
+    <p>(Clicar en la leyenda los valores que se quieran visualizar en el gráfico)</p>
+    {% include figuras/CCAA/comparativaPrecios.html %}
+
+    <h3 id="EvolucionProvincia">Evolución del Precio de los Combustibles por Provincias</h3>
+    <p></p>
+    {% include figuras/PROVINCIAS/comparativaPrecios.html %}
 </div>

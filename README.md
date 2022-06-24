@@ -153,6 +153,7 @@ El repositorio se encuentra estructurado de la siguiente forma:
 
 ````
 .
+├── .github/ # Workflow para obtener los datos y generar el dashboard automáticamente
 ├── assets/ # Imágenes del README
 ├── data/ # Datos para generar las visualizaciones
 ├── docs/ # Dashboard con la visualización de los precios

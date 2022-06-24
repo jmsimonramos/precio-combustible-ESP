@@ -122,11 +122,11 @@ class Visualizacion():
             )
             plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_MAPA']}PROVINCIA-{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
 
-    def __calcularPreciosAnteriores(self, num_dias = 0, mesAnterior = False):
+    def __calcularPreciosAnteriores(self, num_dias = 0, mesAnterior = False, numMeses = 1):
         hoy = datetime.datetime.strptime(self.__config["META"]["ULTIMO_DIA"], '%d-%m-%Y').date()
         if mesAnterior:
             # Obtenemos el mismo día que el que estamos comparando pero para el mes anterior
-            fechaAnterior = hoy - relativedelta.relativedelta(months = 1)
+            fechaAnterior = hoy - relativedelta.relativedelta(months = numMeses)
         else:
             fechaAnterior = hoy - datetime.timedelta(days = num_dias)
         
@@ -141,16 +141,14 @@ class Visualizacion():
                 y = self.__dfHistorico[combustible],
                 name = f"{combustible}",
                 mode = "lines+markers",
-                hovertemplate="<br>".join([
-                "Fecha: %{x}",
-                "Precio (€): %{y}",
-                ])
+                hovertemplate="%{y}€"
             ))
         fig.update_layout(
             title="Evolución del precio medio del combustible en España",
             xaxis_title="Fecha",
             yaxis_title="Precio (€)",
             legend_title="Combustible",
+            hovermode="x unified",
             # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
             xaxis = dict(
                 tickmode = "array",
@@ -163,7 +161,8 @@ class Visualizacion():
 
         datosHoy = self.__dfHistorico[self.__dfHistorico["Fecha"] == self.__config["META"]["ULTIMO_DIA"]][self.__dfHistorico.columns[:-2]]
         datosSemanaPasada = self.__calcularPreciosAnteriores(num_dias = 7)
-        datosMesPasado = self.__calcularPreciosAnteriores(mesAnterior = True)
+        datosMesPasado = self.__calcularPreciosAnteriores(mesAnterior = True, numMeses = 1)
+        datosDosMesesPasado = self.__calcularPreciosAnteriores(mesAnterior = True, numMeses = 2)
 
         fig = go.Figure(data=[
             go.Bar(
@@ -172,6 +171,7 @@ class Visualizacion():
                 y = datosSemanaPasada.head(1).iloc[:, 1:].values[0],
                 text = datosSemanaPasada.head(1).iloc[:, 1:].values[0],
                 textposition = 'auto',
+                marker_color="#646def",
                 hovertemplate="<br>".join([
                     "Combustible: %{x}",
                     "Precio (€): %{y}",
@@ -183,6 +183,7 @@ class Visualizacion():
                 y = datosHoy.head(1).iloc[:, 1:].values[0],
                 text = datosHoy.head(1).iloc[:, 1:].values[0],
                 textposition = 'auto',
+                marker_color="#de5f46",
                 hovertemplate="<br>".join([
                     "Combustible: %{x}",
                     "Precio (€): %{y}",
@@ -205,6 +206,7 @@ class Visualizacion():
                 y = datosMesPasado.head(1).iloc[:, 1:].values[0],
                 text = datosMesPasado.head(1).iloc[:, 1:].values[0],
                 textposition = 'auto',
+                marker_color="#646def",
                 hovertemplate="<br>".join([
                     "Combustible: %{x}",
                     "Precio (€): %{y}",
@@ -216,6 +218,7 @@ class Visualizacion():
                 y = datosHoy.head(1).iloc[:, 1:].values[0],
                 text = datosHoy.head(1).iloc[:, 1:].values[0],
                 textposition = 'auto',
+                marker_color="#de5f46",
                 hovertemplate="<br>".join([
                     "Combustible: %{x}",
                     "Precio (€): %{y}",
@@ -230,22 +233,55 @@ class Visualizacion():
             barmode='group',
         )
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecioMesPasado.html", include_plotlyjs=False, full_html=False)
+
+        fig = go.Figure(data=[
+            go.Bar(
+                name = f"Hace dos Meses {datosDosMesesPasado.head(1)['Fecha'].values[0]}",
+                x = datosDosMesesPasado.head(1).columns[1:].values,
+                y = datosDosMesesPasado.head(1).iloc[:, 1:].values[0],
+                text = datosDosMesesPasado.head(1).iloc[:, 1:].values[0],
+                textposition = 'auto',
+                marker_color="#5dc99a",
+                hovertemplate="<br>".join([
+                    "Combustible: %{x}",
+                    "Precio (€): %{y}",
+                ])
+            ),
+            go.Bar(
+                name = f"Mes Pasado {datosMesPasado.head(1)['Fecha'].values[0]}",
+                x = datosMesPasado.head(1).columns[1:].values,
+                y = datosMesPasado.head(1).iloc[:, 1:].values[0],
+                text = datosMesPasado.head(1).iloc[:, 1:].values[0],
+                textposition = 'auto',
+                marker_color="#646def",
+                hovertemplate="<br>".join([
+                    "Combustible: %{x}",
+                    "Precio (€): %{y}",
+                ])
+            ),
+            go.Bar(
+                name = f"Hoy {datosHoy.head(1)['Fecha'].values[0]}",
+                x = datosHoy.head(1).columns[1:].values,
+                y = datosHoy.head(1).iloc[:, 1:].values[0],
+                text = datosHoy.head(1).iloc[:, 1:].values[0],
+                textposition = 'auto',
+                marker_color="#de5f46",
+                hovertemplate="<br>".join([
+                    "Combustible: %{x}",
+                    "Precio (€): %{y}",
+                ])
+            )
+        ])
+        fig.update_layout(
+            title="Comparativa precios combustible entre el día actual y hace dos meses",
+            xaxis_title="Tipo de Combustible",
+            yaxis_title="Precio (€)",
+            legend_title="Día",
+            barmode='group',
+        )
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecioDosMesesPasado.html", include_plotlyjs=False, full_html=False)
         
     def __generarGraficosCCAA(self):
-        for combustible in self.__dfCCAA.columns[2:-2]:
-            fig = px.line(self.__dfCCAA, x='Fecha', y=combustible, color='CCAA', markers=True, title=f"Evolución del precio del {combustible.replace('Precio ', '')} por Comunidad Autónoma")
-            
-            # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
-            fig.update_layout(
-                xaxis = dict(
-                    tickmode = "array",
-                    tickvals = self.__fechas,
-                    ticktext = self.__fechas
-                )
-            )
-
-            plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_CCAA']}evolucion{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
-
         # COMPARATIVA CCAA
         fig = go.Figure()
         for ccaa in self.__dfCCAA.CCAA.unique():
@@ -258,18 +294,16 @@ class Visualizacion():
                         name = f"{combustible}-{ccaa}",
                         visible = "legendonly",
                         mode = "lines+markers",
-                        hovertemplate="<br>".join([
-                        "Fecha: %{x}",
-                        "Precio (€): %{y}",
-                        ])
+                        hovertemplate="%{y}€",
                     )
             )
 
         fig.update_layout(
-            title="Comparativa precios por Comunidad Autónoma",
+            title="Evolución de los precios del combustible por Comunidad Autónoma. (Clicar en la leyenda los valores que se quieran visualizar en el gráfico)",
             xaxis_title="Fecha",
             yaxis_title="Precio (€)",
             legend_title="Combustible + CCAA",
+            hovermode="x unified",
             # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
             xaxis = dict(
                 tickmode = "array",
@@ -280,19 +314,6 @@ class Visualizacion():
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_CCAA']}comparativaPrecios.html", include_plotlyjs=False, full_html=False)
     
     def __generarGraficosProvincias(self):
-        for combustible in self.__dfProvincia.columns[2:-2]:
-            fig = px.line(self.__dfProvincia, x='Fecha', y=combustible, color='Provincia', markers=True, title=f"Evolución del precio del {combustible.replace('Precio ', '')} por Provincias")
-            # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
-            fig.update_layout(
-                xaxis = dict(
-                    tickmode = "array",
-                    tickvals = self.__fechas,
-                    ticktext = self.__fechas
-                )
-            )
-        
-            plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_PROVINCIA']}evolucion{unidecode.unidecode(combustible.replace(' ', ''))}.html", include_plotlyjs=False, full_html=False)
-        
         # COMPARATIVA PROVINCIAS
         fig = go.Figure()
         for provincia in self.__dfProvincia.Provincia.unique():
@@ -305,17 +326,15 @@ class Visualizacion():
                         name = f"{combustible}-{provincia}",
                         visible = "legendonly",
                         mode = "lines+markers",
-                        hovertemplate="<br>".join([
-                        "Fecha: %{x}",
-                        "Precio (€): %{y}",
-                        ])
+                        hovertemplate="%{y}€",
                     )
             )
         fig.update_layout(
-            title="Comparativa precios del combustible por Provincia",
+            title="Evolución de los precios del combustible por Provincia. (Clicar en la leyenda los valores que se quieran visualizar en el gráfico)",
             xaxis_title="Fecha",
             yaxis_title="Precio (€)",
             legend_title="Combustible + Provincia",
+            hovermode="x unified",
             # Modificamos las etiquetas del eje X para que únicamente aparezca la primera y la última fecha de la que se disponen datos y así evitar que se superpongan
             xaxis = dict(
                 tickmode = "array",
