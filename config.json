@@ -6,7 +6,7 @@
         "IMG_PATH": "data/assets/img/",
         "LOG_PATH": "app.log",
         "FORMATO_FECHA_LOG": "%d/%m/%y %H:%M:%S",
-        "ULTIMO_DIA": "01-07-2022",
+        "ULTIMO_DIA": "02-07-2022",
         "REMOTO": "origin",
         "ICONO_OK": "\u2705",
         "ICONO_ERROR": "\u274c"
