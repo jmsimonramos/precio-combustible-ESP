@@ -69,6 +69,10 @@ class Visualizacion():
         self.__dfHistorico["Fecha"] = pd.to_datetime(self.__dfHistorico["Fecha"], format="%d-%m-%Y")
         self.__dfHistorico.sort_values(by="Fecha", ascending=True, inplace=True)
         self.__dfHistorico["Fecha"] = self.__dfHistorico["Fecha"].dt.strftime('%d-%m-%Y')
+
+        # Renombramos las columnas para eliminar ruido en los gráficos
+        self.__dfHistorico.columns = self.__dfHistorico.columns.str.replace("Precio", "")
+        self.__dfCCAA.columns = self.__dfCCAA.columns.str.replace("Precio", "")
         
         # Obtenemos el lsitado de las fechas para las que disponemos de datos y lo pasamos a formato lista eliminando los valores intermedios para tener únicamente la primera fecha disponible y la última. Esto nos servirá posteriormente para mejorar los datos en las visualizaciones
         self.__fechas = self.__dfCCAA.Fecha.unique()
@@ -82,6 +86,8 @@ class Visualizacion():
         for fichero in lista_precios_provincia:
             df_aux = pd.read_csv(f"{self.__config['VISUALIZACION']['RUTA_PROVINCIA']}{fichero}", sep=";", encoding="utf-8")
             self.__dfProvincia = pd.concat([self.__dfProvincia, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
+        
+        self.__dfProvincia.columns = self.__dfProvincia.columns.str.replace("Precio", "")
         
     def __generarGraficos(self):
         # Generamos gráficos de líneas de forma dinámica para cada combustible fijado en la configuración
@@ -198,7 +204,9 @@ class Visualizacion():
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_GENERAL']}comparativaPrecioSemanaPasada.html", include_plotlyjs=False, full_html=False)
 
         # Calculamos los meses anteriores para los meses de los que disponemos de datos
-        mesesAnteriores = len([_ for _ in os.listdir(self.__config["VISUALIZACION"]["RUTA_CCAA"])]) - 1
+        añoActual = self.__config["META"]["ULTIMO_DIA"].split("-")[-1]
+
+        mesesAnteriores = len([file for file in os.listdir(self.__config["VISUALIZACION"]["RUTA_CCAA"]) if f"-{añoActual}" in file]) - 1
         
         fig = go.Figure()
         for indice, mes in enumerate( range(mesesAnteriores, 0, -1) ) :
