@@ -29,4 +29,4 @@ class IO():
                 elif esCCAA:
                     dataframe.to_csv(f"{self.config['META']['CCAA_PATH']}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=False, index=False, mode="a")
                 else:
-                    dataframe.to_csv(f"{self.config['META']['EESS_PATH']}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=False, index=False, mode="a")
+                    dataframe.drop(columns=["IDCCAA", "Provincia"], axis=1).to_csv(f"{self.config['META']['EESS_PATH']}{fecha[3:]}.csv", sep=";", encoding="utf-8", header=False, index=False, mode="a")
