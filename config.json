@@ -80,6 +80,7 @@
     "VISUALIZACION": {
         "RUTA_CCAA": "data/historico/CCAA/",
         "RUTA_PROVINCIA": "data/historico/PROVINCIAS/",
+        "RUTA_EESS": "data/historico/EESS/",
         "COMBUSTIBLES_MOSTRAR": [
             "Precio Gasoleo A",
             "Precio Gasoleo Premium",
@@ -92,6 +93,7 @@
         "RUTA_GUARDAR_CCAA": "docs/_includes/figuras/CCAA/",
         "RUTA_GUARDAR_MAPA": "docs/_includes/figuras/MAPAS/",
         "RUTA_GUARDAR_PROVINCIA": "docs/_includes/figuras/PROVINCIAS/",
+        "RUTA_GUARDAR_EESS": "docs/_includes/figuras/EESS/",
         "RUTA_MAPA": "data/geo/",
         "ANCHO": 600,
         "ZOOM": 3.8,

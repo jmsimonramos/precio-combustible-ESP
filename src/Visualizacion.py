@@ -16,6 +16,7 @@ class Visualizacion():
         self.__config = self.__IO.cargarConfiguracion()
         self.__dfCCAA = pd.DataFrame()
         self.__dfProvincia = pd.DataFrame()
+        self.__EESS = pd.DataFrame()
         self.__dfHistorico = pd.DataFrame()
         self.__mapaCCAA = pd.DataFrame()
         self.__mapaProvincia = pd.DataFrame()
@@ -89,6 +90,7 @@ class Visualizacion():
         self.__generarGraficosMapa()
         self.__generarGraficosCCAA()
         self.__generarGraficosProvincias()
+        self.__generarHistogramaEESS()
 
     def __generarGraficosMapa(self):
         # CCAA
@@ -140,7 +142,7 @@ class Visualizacion():
             fig.add_trace(go.Scatter(
                 x = self.__dfHistorico["Fecha"],
                 y = self.__dfHistorico[combustible],
-                name = f"{combustible}",
+                name = combustible.replace("Precio", ""),
                 mode = "lines+markers",
                 hovertemplate="%{y}€"
             ))
@@ -241,7 +243,7 @@ class Visualizacion():
                     go.Scatter(
                         x = datos["Fecha"],
                         y = datos[combustible],
-                        name = f"{combustible}-{ccaa}",
+                        name = f"{combustible.replace('Precio', '')}-{ccaa}",
                         visible = "legendonly",
                         mode = "lines+markers",
                         hovertemplate="%{y}€",
@@ -263,6 +265,34 @@ class Visualizacion():
         )
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_CCAA']}comparativaPrecios.html", include_plotlyjs=False, full_html=False)
     
+    def __generarHistogramaEESS(self):
+        ruta = self.__config["VISUALIZACION"]["RUTA_EESS"]
+        fichero_datos = sorted([f"{ruta}{fichero}" for fichero in os.listdir(ruta)], key = os.path.getmtime, reverse=True)[0]
+        
+        self.__EESS = pd.read_csv(fichero_datos, sep=";", encoding="utf-8")
+        self.__EESS = self.__EESS[self.__EESS["Fecha"] == self.__config["META"]["ULTIMO_DIA"]]
+
+        fig = go.Figure()
+
+        for combustible in self.__EESS.columns[2:-2]:
+            fig.add_trace(go.Histogram(
+                x = self.__EESS[combustible],
+                name = combustible.replace("Precio", ""),
+                hovertemplate="%{y}"
+            ))
+
+        fig.update_layout(
+                    title=f"Distribución del precio de los combustibles en las estaciones de servicio para el día: {self.__config['META']['ULTIMO_DIA']}",
+                    xaxis_title="Precio (€)",
+                    yaxis_title="Total",
+                    barmode="overlay",
+                    legend_title="Combustible",
+                    hovermode="x unified",
+                )
+        fig.update_traces(opacity=0.75)
+        
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_EESS']}histogramaPrecios.html", include_plotlyjs=False, full_html=False)
+
     def __generarGraficosProvincias(self):
         # COMPARATIVA PROVINCIAS
         fig = go.Figure()
@@ -273,7 +303,7 @@ class Visualizacion():
                     go.Scatter(
                         x = datos["Fecha"],
                         y = datos[combustible],
-                        name = f"{combustible}-{provincia}",
+                        name = f"{combustible.replace('Precio', '')}-{provincia}",
                         visible = "legendonly",
                         mode = "lines+markers",
                         hovertemplate="%{y}€",
