@@ -82,12 +82,9 @@
         "RUTA_PROVINCIA": "data/historico/PROVINCIAS/",
         "RUTA_EESS": "data/historico/EESS/",
         "COMBUSTIBLES_MOSTRAR": [
-            "Precio Gasoleo A",
-            "Precio Gasoleo Premium",
-            "Precio Gasolina 95 E5",
-            "Precio Gasolina 95 E10",
-            "Precio Gasolina 98 E5",
-            "Precio Gasolina 98 E10"
+            "Gasoleo A",
+            "Gasolina 95 E5",
+            "Gasolina 98 E5"
         ],
         "RUTA_GUARDAR_GENERAL": "docs/_includes/figuras/",
         "RUTA_GUARDAR_CCAA": "docs/_includes/figuras/CCAA/",

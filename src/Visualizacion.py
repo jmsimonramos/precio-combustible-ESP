@@ -1,3 +1,4 @@
+from distutils.command.config import config
 import pandas as pd
 import os, sys
 import plotly.express as px
@@ -71,8 +72,8 @@ class Visualizacion():
         self.__dfHistorico["Fecha"] = self.__dfHistorico["Fecha"].dt.strftime('%d-%m-%Y')
 
         # Renombramos las columnas para eliminar ruido en los gráficos
-        self.__dfHistorico.columns = self.__dfHistorico.columns.str.replace("Precio", "")
-        self.__dfCCAA.columns = self.__dfCCAA.columns.str.replace("Precio", "")
+        self.__dfHistorico.columns = self.__dfHistorico.columns.str.replace("Precio ", "")
+        self.__dfCCAA.columns = self.__dfCCAA.columns.str.replace("Precio ", "")
         
         # Obtenemos el lsitado de las fechas para las que disponemos de datos y lo pasamos a formato lista eliminando los valores intermedios para tener únicamente la primera fecha disponible y la última. Esto nos servirá posteriormente para mejorar los datos en las visualizaciones
         self.__fechas = self.__dfCCAA.Fecha.unique()
@@ -87,7 +88,7 @@ class Visualizacion():
             df_aux = pd.read_csv(f"{self.__config['VISUALIZACION']['RUTA_PROVINCIA']}{fichero}", sep=";", encoding="utf-8")
             self.__dfProvincia = pd.concat([self.__dfProvincia, df_aux], axis=0) # Concatenamos los datasets de manera horizontal
         
-        self.__dfProvincia.columns = self.__dfProvincia.columns.str.replace("Precio", "")
+        self.__dfProvincia.columns = self.__dfProvincia.columns.str.replace("Precio ", "")
         
     def __generarGraficos(self):
         # Generamos gráficos de líneas de forma dinámica para cada combustible fijado en la configuración
@@ -148,7 +149,7 @@ class Visualizacion():
             fig.add_trace(go.Scatter(
                 x = self.__dfHistorico["Fecha"],
                 y = self.__dfHistorico[combustible],
-                name = combustible.replace("Precio", ""),
+                name = combustible,
                 mode = "lines+markers",
                 hovertemplate="%{y}€"
             ))
@@ -251,8 +252,8 @@ class Visualizacion():
                     go.Scatter(
                         x = datos["Fecha"],
                         y = datos[combustible],
-                        name = f"{combustible.replace('Precio', '')}-{ccaa}",
-                        visible = "legendonly",
+                        name = f"{combustible}-{ccaa}",
+                        visible = None if combustible in self.__config["VISUALIZACION"]["COMBUSTIBLES_MOSTRAR"] else "legendonly",
                         mode = "lines+markers",
                         hovertemplate="%{y}€",
                     )
@@ -285,7 +286,7 @@ class Visualizacion():
         for combustible in self.__EESS.columns[2:-2]:
             fig.add_trace(go.Histogram(
                 x = self.__EESS[combustible],
-                name = combustible.replace("Precio", ""),
+                name = combustible.replace("Precio ", ""),
                 hovertemplate="%{y}"
             ))
 
@@ -311,8 +312,8 @@ class Visualizacion():
                     go.Scatter(
                         x = datos["Fecha"],
                         y = datos[combustible],
-                        name = f"{combustible.replace('Precio', '')}-{provincia}",
-                        visible = "legendonly",
+                        name = f"{combustible}-{provincia}",
+                        visible = None if combustible in self.__config["VISUALIZACION"]["COMBUSTIBLES_MOSTRAR"] else "legendonly",
                         mode = "lines+markers",
                         hovertemplate="%{y}€",
                     )
