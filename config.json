@@ -85,6 +85,11 @@
             "Gasoleo A",
             "Gasolina 95 E5"
         ],
+        "COMBUSTIBLES_EESS_MOSTRAR": [
+            "Gasoleo A",
+            "Gasolina 95 E5",
+            "Gasolina 98 E5"
+        ],
         "RUTA_GUARDAR_GENERAL": "docs/_includes/figuras/",
         "RUTA_GUARDAR_CCAA": "docs/_includes/figuras/CCAA/",
         "RUTA_GUARDAR_MAPA": "docs/_includes/figuras/MAPAS/",

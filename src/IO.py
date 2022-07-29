@@ -1,8 +1,14 @@
-import json
+import json, pickle
 class IO():
     def __init__(self):
         self.config = self.cargarConfiguracion()
-        
+    
+    # Carga el diccionario con las marcas de cada estación de servicio
+    def cargarDiccionarioMarcasEESS(self, ruta="data/diccionarioMarcasEESS.bin"):
+        with open(ruta, "rb") as ficheroBinario:
+            diccionarioMarcas = pickle.load(ficheroBinario)
+        return diccionarioMarcas
+
     # Carga los datos de la configuración fijados en el fichero config.json
     def cargarConfiguracion(self, ruta="config.json"):
         with open(ruta, 'r', encoding='utf-8') as file:

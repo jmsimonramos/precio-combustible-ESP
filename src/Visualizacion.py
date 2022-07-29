@@ -11,6 +11,9 @@ from dateutil import relativedelta
 from src.IO import IO
 from src.Utils import Utils
 
+import warnings
+warnings.filterwarnings('ignore')
+
 class Visualizacion():
     def __init__(self):
         self.__Utils, self.__IO = Utils(), IO()
@@ -22,12 +25,14 @@ class Visualizacion():
         self.__mapaCCAA = pd.DataFrame()
         self.__mapaProvincia = pd.DataFrame()
         self.__fechas = []
+        self.__diccionarioMarcasEESS = self.__IO.cargarDiccionarioMarcasEESS()
 
     def generarVisualizaciones(self):
         print("Cargando datos para la visualización")
         try:
             self.__cargarDatosCCAA() # Cargamos los datos de los precios por CCAA
             self.__cargarDatosProvincia() # Cargamos los datos de los precios por Provincias
+            self.__cargarDatosEESS() # Cargamos los datos de los precios por EESS
             self.__cargarDatosMapa() # Cargamos los datos del mapa
         except Exception as e:
             print(e)
@@ -42,6 +47,14 @@ class Visualizacion():
             sys.exit(0)
         self.__IO.guardarConfiguracion(self.__config)
     
+    def __cargarDatosEESS(self):
+        ruta = self.__config["VISUALIZACION"]["RUTA_EESS"]
+        fichero_datos = sorted([f"{ruta}{fichero}" for fichero in os.listdir(ruta)], key = os.path.getmtime, reverse=True)[0]
+        
+        self.__EESS = pd.read_csv(fichero_datos, sep=";", encoding="utf-8")
+        self.__EESS = self.__EESS[self.__EESS["Fecha"] == self.__config["META"]["ULTIMO_DIA"]]
+        
+
     def __cargarDatosMapa(self):
         self.__mapaCCAA = self.__dfCCAA.groupby(["Fecha", "CCAA"], as_index=False).mean().round(3)
         self.__mapaCCAA = self.__mapaCCAA[self.__mapaCCAA["Fecha"] == self.__config["META"]["ULTIMO_DIA"]].drop(columns=["Fecha"])
@@ -97,7 +110,7 @@ class Visualizacion():
         self.__generarGraficosMapa()
         self.__generarGraficosCCAA()
         self.__generarGraficosProvincias()
-        self.__generarHistogramaEESS()
+        self.__generarGraficosEESS()
 
     def __generarGraficosMapa(self):
         # CCAA
@@ -274,15 +287,56 @@ class Visualizacion():
         )
         plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_CCAA']}comparativaPrecios.html", include_plotlyjs=False, full_html=False)
     
-    def __generarHistogramaEESS(self):
-        ruta = self.__config["VISUALIZACION"]["RUTA_EESS"]
-        fichero_datos = sorted([f"{ruta}{fichero}" for fichero in os.listdir(ruta)], key = os.path.getmtime, reverse=True)[0]
-        
-        self.__EESS = pd.read_csv(fichero_datos, sep=";", encoding="utf-8")
-        self.__EESS = self.__EESS[self.__EESS["Fecha"] == self.__config["META"]["ULTIMO_DIA"]]
+    def __generarGraficosEESS(self):
 
+        # PRECIO MEDIO POR MARCA
+        # Filtramos el DataFrame por aquellos combustibles que queremos mostrar
+        
+        EESS_Marcas = self.__EESS[self.__EESS.IDEESS.isin(self.__diccionarioMarcasEESS.keys())]
+        
+        # Añadimos la marca de la gasolinera a partir de su identificador y lo eliminamos ya que no es necesario
+        EESS_Marcas["Marca"] = EESS_Marcas["IDEESS"].apply(lambda marca: self.__diccionarioMarcasEESS[marca])
+        EESS_Marcas.drop("IDEESS", axis=1, inplace=True)
+
+        # Agrupamos por marca y calculamos las métricas para cada combustible
+        EESS_Marcas = EESS_Marcas.groupby("Marca").mean().reset_index()
+        EESS_Marcas = EESS_Marcas[EESS_Marcas.columns[:-2]]
+        EESS_Marcas.columns = EESS_Marcas.columns.str.replace("Precio ", "")
+
+        # Rellenamos los valores nulos con 0.0 y calculamos la suma de los precios del combustible de esa marca para ordenarlas de menor precio a mayor precio
+        EESS_Marcas.fillna(0.0, inplace=True)
+
+        EESS_Marcas["SUMA"] = EESS_Marcas.sum(axis=1)
+        EESS_Marcas = EESS_Marcas.sort_values(by="SUMA", ascending=True)
+
+
+        # Comparativa por Estación de Servicio
         fig = go.Figure()
 
+        for combustible in EESS_Marcas.columns[1:-1]:
+            fig.add_trace(go.Bar(
+                x = EESS_Marcas.Marca.values,
+                y = round(EESS_Marcas[combustible], 3),
+                text = round(EESS_Marcas[combustible], 3),
+                textposition = "auto",
+                hovertemplate="Precio:%{y}€",
+                visible = None if combustible in self.__config["VISUALIZACION"]["COMBUSTIBLES_EESS_MOSTRAR"] else "legendonly",
+                name = combustible.replace("Precio", "")
+            ))
+        fig.update_layout(
+            title=f"Comparativa del precio medio del combustible en las principales Estaciones de Servicio<br>(ordenadas de más baratas a más caras). Última Actualización: {self.__config['META']['ULTIMO_DIA']}",
+            xaxis_title="Estación de Servicio",
+            yaxis_title="Precio (€)",
+            legend_title="Combustible",
+            hovermode="x unified",
+            barmode='group',
+        )
+        fig.update_xaxes(tickangle=45)
+
+        plo.io.write_html(fig, f"{self.__config['VISUALIZACION']['RUTA_GUARDAR_EESS']}comparativaPreciosEESS.html", include_plotlyjs=False, full_html=False)
+
+        # HISTOGRAMA
+        fig = go.Figure()
         for combustible in self.__EESS.columns[2:-2]:
             fig.add_trace(go.Histogram(
                 x = self.__EESS[combustible],
